@@ -1,5 +1,5 @@
 ## DATE: 6/2/15
-## AUTHOR: Shrikar Thodla
+## AUTHOR: Shrikar Thodla and David Hill
 ## PURPOSE: To format gene expression data in a table and plot the data as box plots to provide a easy to read visual representation of the data. This function takes in 5 arguments. The first argument is a vector of gene names (as strings), the second argument is how many rows you want in the .pdf file. The third argument is the name of the input file (as a string) from where to get the data. The fourth argument is the name of .csv file that is exported from the program. The fifth (last) argument is the name of the .pdf file that will be exported from the program.
 #
 #REQUIRES: Input File's first column must be NCBI format gene names and the remaining columns must be fpkm data
@@ -8,7 +8,7 @@
 gene_retriever <- function(gene_names,nrow=3, data.file="./DATA/*", csv.out="output.csv",pdf= "gr_output.pdf") {
     
     #Read in data from .txt file
-    data1 <- read.table(data.file,header=TRUE,sep="\t")
+    data1 <- read.table(data.file,header=TRUE,sep=",")
     
     #Start making the table that will contain the gene expression data of the gene given to the function. Start with the first gene in the vector
     data.defa <- subset(data1, data1[,1] == gene_names[1])
@@ -77,4 +77,4 @@ gene_retriever <- function(gene_names,nrow=3, data.file="./DATA/*", csv.out="out
 }
 
 ## Test case
-gene_retriever(gene_names=c("DEFA5","GAPDH","MUC2","FUT2","SDC4"),nrow=2,data.file="./DATA/CtlHIO_v_EcoliHIO_v_HIO_v_HuSI.Duo.A_v_HuSI.Dist.A_v_HuSI.F_repFpkms.txt")
+gene_retriever(gene_names=c("A1CF","AADAC","AAGAB","AASS","AATK","AACS"),nrow=2,data.file="./DATA/CtlHIO_v_EcoliHIO_v_HIO_v_HuSI.Duo.A_v_HuSI.Dist.A_v_HuSI.F_repFpkms.csv")

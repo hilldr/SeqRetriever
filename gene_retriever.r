@@ -76,5 +76,3 @@ gene_retriever <- function(gene_names,nrow=3, data.file="./DATA/*", csv.out="out
     dev.off()
 }
 
-## Test case
-gene_retriever(gene_names=c("A1CF","AADAC","AAGAB","AASS","AATK","AACS"),nrow=2,data.file="./DATA/CtlHIO_v_EcoliHIO_v_HIO_v_HuSI.Duo.A_v_HuSI.Dist.A_v_HuSI.F_repFpkms.csv")

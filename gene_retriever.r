@@ -1,14 +1,23 @@
 ## DATE: 6/2/15
 ## AUTHOR: Shrikar Thodla and David Hill
-## PURPOSE: To format gene expression data in a table and plot the data as box plots to provide a easy to read visual representation of the data. This function takes in 5 arguments. The first argument is a vector of gene names (as strings), the second argument is how many rows you want in the .pdf file. The third argument is the name of the input file (as a string) from where to get the data. The fourth argument is the name of .csv file that is exported from the program. The fifth (last) argument is the name of the .pdf file that will be exported from the program.
+## PURPOSE: To format gene expression data in a table and plot the data as box plots to provide a easy to read visual representation of the data. This function takes in 5 arguments. The first argument is a vector of gene names (as strings), the second argument is how many rows you want in the .pdf file. The third argument is the name of the directory that contains from where to get the data. The fourth argument is the name of .csv file that is exported from the program. The fifth (last) argument is the name of the .pdf file that will be exported from the program.
 #
 #REQUIRES: Input File's first column must be NCBI format gene names and the remaining columns must be fpkm data
 #
-#Function name is gene_retriever and it takes 2 arguments (can add more). One argument is a vector of gene names (as strings) and the other is how many rows should be shown in the .pdf file
-gene_retriever <- function(gene_names,nrow=3, data.file="./DATA/*", csv.out="output.csv",pdf= "gr_output.pdf") {
+gene_retriever <- function(gene_names,nrow=3, wd= "./",csv.out="output.csv",pdf= "gr_output.pdf") {
     
-    #Read in data from .txt file
-    data1 <- read.table(data.file,header=TRUE,sep=",")
+    #Read in data from genes.count_table file
+    #wd_cound is the string that results from concatenating the directory location and file name
+    wd_count <- paste(wd,"/genes.count_table", sep="")
+    data1 <- read.table(wd_count,header=TRUE,sep="\t")
+    #Set 1st column to NULL because it is not needed, effectively deletes the column
+    data1$tracking_id <- NULL
+    #Read in data from genes.attr_table file
+    wd_attr <- paste(wd,"/genes.attr_table", sep="")
+    attr.table <- read.table(wd_attr,header=TRUE, sep="\t")
+    #Bind the gene_short_name column from the attr.table to data1, this will put the gene_short_name column as the first column in data1
+    data1 <- cbind(attr.table$gene_short_name, data1)
+    colnames(data1)[1] <- "gene_short_name"
     
     #Start making the table that will contain the gene expression data of the gene given to the function. Start with the first gene in the vector
     data.defa <- subset(data1, data1[,1] == gene_names[1])
@@ -26,7 +35,7 @@ gene_retriever <- function(gene_names,nrow=3, data.file="./DATA/*", csv.out="out
     col_use = ncol(data.defa) - 1
     
     #Make a table with 3 columns and (len_gen_names * col_use) rows (data from each column in data.defa will be a new row in data.defb for each gene
-    data.defb <- matrix(nrow = len_gen_names * (col_use), ncol = 3)
+    data.defb <- matrix(nrow = (len_gen_names * col_use), ncol = 3)
     
     #Convert the gene_short_name column into strings
     data.defa[,1] <- sapply(data.defa[,1], as.character)
@@ -51,7 +60,6 @@ gene_retriever <- function(gene_names,nrow=3, data.file="./DATA/*", csv.out="out
             x = x + 1
         }
     }
-    
     #Add column names to the formatted table
     colnames(data.defb) <- c("gene", "group", "fpkm")
     

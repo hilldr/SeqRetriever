@@ -7,7 +7,7 @@ PURPOSE: To format gene expression data in a table and plot the data as box plot
 This function takes in 5 arguments:
   1. Vector of gene names (as strings)
   2. # rows you want in the .pdf file (Default value is 3)
-  3. The name of the input file (as a string) from where to get the data
+  3. The name of the directory and the path to where the output of the cufflinks program is (Default is home directory)
   4. The name of .csv file that is exported from the program (Default name is "output.csv")
   5. The name of the .pdf file that will be exported from the program (Default name is "gr_output.pdf")
 

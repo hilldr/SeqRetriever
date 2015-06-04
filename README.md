@@ -12,3 +12,5 @@ This function takes in 5 arguments:
   5. The name of the .pdf file that will be exported from the program (Default name is "gr_output.pdf")
 
 REQUIRES: Input File's first column must be NCBI format gene names and the remaining columns must be fpkm data
+
+In order to use this function, you must have access to R. The function name is gene_retriever().

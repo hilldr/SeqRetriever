@@ -1,0 +1,5 @@
+param	value
+cmd_line	cuffnorm -o normout021215 -p 4 -L ES,DefEnd,Lung_A,HLO,Lung_F merged_asm/merged.gtf ./ME1/abundances.cxb,./ME2/abundances.cxb,./ME3/abundances.cxb ./MD1/abundances.cxb,./MD2/abundances.cxb,./MD3/abundances.cxb ./ERR315341/abundances.cxb,./ERR315346/abundances.cxb,./ERR315353/abundances.cxb,./ERR315424/abundances.cxb,./ERR315439/abundances.cxb ./41681/abundances.cxb,./41676/abundances.cxb,./41677/abundances.cxb,./41678/abundances.cxb,./41679/abundances.cxb,./41680/abundances.cxb ./SRR786753/abundances.cxb,./SRR786754/abundances.cxb,./SRR786756/abundances.cxb,./SRR786762/abundances.cxb,./SRR786769/abundances.cxb,./SRR786780/abundances.cxb 
+version	2.2.1
+SVN_revision	4237
+boost_version	104700

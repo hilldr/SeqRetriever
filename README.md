@@ -13,4 +13,6 @@ This function takes in 5 arguments:
 
 **REQUIREMENTS**: Input File's first column must be NCBI format gene names and the remaining columns must be fpkm data
 
-In order to use this function, you must have access to R. The function name is gene_retriever().
+In order to use this function, you must have access to R. You can download R at http://cran.r-project.org/
+
+The function name is gene_retriever().

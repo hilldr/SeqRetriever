@@ -4,7 +4,7 @@
 #
 #REQUIRES: Input File's first column must be NCBI format gene names and the remaining columns must be fpkm data
 #
-gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",pdf= "gr_output.pdf") {
+gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",pdf= "gr_output.pdf", w=8, h=11) {
     
     #Read in data from genes.count_table file
     #dir_cound is the string that results from concatenating the directory location and file name
@@ -67,7 +67,7 @@ gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",pdf
     colnames(data_for) <- c("gene", "group", "fpkm")
     #Make box plots and export them as a .pdf file
     library(ggplot2)
-    pdf(file=pdf,paper="a4r")
+    pdf(file=pdf,width=w, height=h)
     plot <- ggplot(data_for,aes(x=group,y=fpkm,fill=factor(group)))+
     geom_boxplot(color="black") +
     geom_point(aes(fill=factor(group)),color="black",shape=21,size=10/length(gene_names)) +

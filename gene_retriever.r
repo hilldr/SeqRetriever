@@ -54,10 +54,8 @@ gene_retriever_pdf <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv"
     write.csv(data_sub,file=csv.out, row.names = FALSE)
     #data.defa will have multiple different columns, but the first column is just gene names, which we don't care about. That's why we subtract 1 from the number of columns in data.defa
     col_use = ncol(data_sub) - 1
-    
     #Make a table with 3 columns and (len_gen_names * col_use) rows (data from each column in data.defa will be a new row in data.defb for each gene
     data_for <- data.frame(matrix(nrow = (len_gen_names * col_use), ncol = 3))
-    
     #Make a vector with the column names of data.defa, will be used later to fill in data.defb
     col_names <- c(colnames(data_sub))
     #Remove the first elements of col_names because it is just a columns containing names
@@ -125,17 +123,32 @@ gene_retriever_png <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv"
         data.gene <- subset(data1, data1[,1] == gene_names[i])
         data_sub <- rbind(data_sub, data.gene)
     }
+    #Convert the gene_short_name column into strings
+    data_sub[,1] <- sapply(data_sub[,1], as.character)
+    #Number of rows in data_sub is how many genes there are in actuality. Variable gene_names may contain mispelled genes or genes that are not found in the specific data set.
+    new_len_gen <- nrow(data_sub)
+    #If there is a difference in length between the amount of genes subsetted and the amount of genes given, then print out the genes that were not subsetted and update variables
+    if (new_len_gen != len_gen_names) {
+        #new_gene_names contains all the genes that were subsetted
+        new_gene_names <- data_sub$gene_short_name
+        #Go through each gene in the gene_names variable and see which one(s) is/are missing
+        for (z in 1:len_gen_names) {
+            if (!(gene_names[z] %in% new_gene_names)) {
+                error <- paste(gene_names[z], "was not found or was misspelled", sep = " ")
+                print(error)
+            }
+        }
+        #Update variables
+        gene_names = new_gene_names
+        len_gen_names = new_len_gen
+    }
     #Export subsetted data as a .csv file
     write.csv(data_sub,file=csv.out, row.names = FALSE)
     #data.defa will have multiple different columns, but the first column is just gene names, which we don't care about. That's why we subtract 1 from the number of columns in data.defa
     col_use = ncol(data_sub) - 1
-    
     #Make a table with 3 columns and (len_gen_names * col_use) rows (data from each column in data.defa will be a new row in data.defb for each gene
     data_for <- data.frame(matrix(nrow = (len_gen_names * col_use), ncol = 3))
     data.defb <- matrix(nrow = (len_gen_names * col_use), ncol = 3)
-    
-    #Convert the gene_short_name column into strings
-    data_sub[,1] <- sapply(data_sub[,1], as.character)
     #Make a vector with the column names of data.defa, will be used later to fill in data.defb
     col_names <- c(colnames(data_sub))
     #Remove the first elements of col_names because it is just a columns containing names

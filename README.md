@@ -30,12 +30,15 @@ In order to use this function, you must have access to R. The function name is g
 
 ##How to call gene_retriever() and what each of the options specifies:
 
-After you load gene_retriever(), you can now use the gene_retriever function. In order to use the gene_retriever() function just type gene_retriever(...) where ... are your arguments. the default arguments are gene_retriever(gene_names,nrow=3, dir= "./",csv.out="output.csv",pdf= "gr_output.pdf").
+After you load gene_retriever(), you can now use the gene_retriever function. There are two different gene retriever functions one that exports a pdf file and one that exports a png file (gene_retriever_pdf() and gene_retriever_png()). In order to use the gene_retriever() function just type gene_retriever_pdf(...) (or gene_retriever_png()) where ... are your arguments. the default arguments are gene_retriever(gene_names,nrow=3, dir= "./",csv.out="output.csv",pdf= "gr_output.pdf").
+>>>>>>> output_format
 1. gene_names is a list of strings that are the names of the genes you want to retrieve. This argument is required for the function to work
 2. nrow is the number of rows you want in the output file containing the tables
 3. dir is the directory you are currently in
 4. csv.out is the name of the .csv file that will be exported from the function
-5. pdf is the name of the .pdf file that will be exported from the function
+5. pdf (or png) is the name of the .pdf (or .png) file that will be exported from the function
+6. For gene_retriever_pdf() there are two more arguments, w and h (in that order) that specify the size of the page that is exported as a pdf file. the default is 8 x 11.
+
 The values for the arguments given above are the default values, so if you don't input the dir argument, the function will just use your working directory. If you want to change the dir argument simply call gene_retriever() like so gene_retriever(gene_names, dir="...")
 
 

@@ -4,10 +4,10 @@
 #
 #REQUIRES: Input File's first column must be NCBI format gene names and the remaining columns must be fpkm data
 #
-gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_name= "gr_output.pdf", w=8, h=11, pdf=TRUE) {
+gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",pdf= "gr_output.pdf", w=8, h=11) {
     
     #Read in data from genes.count_table file
-    #wd_cound is the string that results from concatenating the directory location and file name
+    #dir_cound is the string that results from concatenating the directory location and file name
     dir_count <- paste(dir,"/genes.count_table", sep="")
     data1 <- read.table(dir_count,header=TRUE,sep="\t")
     #Set 1st column to NULL because it is not needed, effectively deletes the column
@@ -31,31 +31,17 @@ gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_
         data.gene <- subset(data1, data1[,1] == gene_names[i])
         data_sub <- rbind(data_sub, data.gene)
     }
-    #Convert the gene_short_name column into strings
-    data_sub[,1] <- sapply(data_sub[,1], as.character)
-    #Number of rows in data_sub is how many genes there are in actuality. Variable gene_names may contain mispelled genes or genes that are not found in the specific data set.
-    new_len_gen <- nrow(data_sub)
-    #If there is a difference in length between the amount of genes subsetted and the amount of genes given, then print out the genes that were not subsetted and update variables
-    if (new_len_gen != len_gen_names) {
-        #new_gene_names contains all the genes that were subsetted
-        new_gene_names <- data_sub$gene_short_name
-        #Go through each gene in the gene_names variable and see which one(s) is/are missing
-        for (z in 1:len_gen_names) {
-            if (!(gene_names[z] %in% new_gene_names)) {
-                error <- paste(gene_names[z], "was not found or was misspelled", sep = " ")
-                print(error)
-            }
-        }
-        #Update variables
-        gene_names = new_gene_names
-        len_gen_names = new_len_gen
-    }
     #Export subsetted data as a .csv file
     write.csv(data_sub,file=csv.out, row.names = FALSE)
     #data.defa will have multiple different columns, but the first column is just gene names, which we don't care about. That's why we subtract 1 from the number of columns in data.defa
     col_use = ncol(data_sub) - 1
+    
     #Make a table with 3 columns and (len_gen_names * col_use) rows (data from each column in data.defa will be a new row in data.defb for each gene
     data_for <- data.frame(matrix(nrow = (len_gen_names * col_use), ncol = 3))
+    data.defb <- matrix(nrow = (len_gen_names * col_use), ncol = 3)
+    
+    #Convert the gene_short_name column into strings
+    data_sub[,1] <- sapply(data_sub[,1], as.character)
     #Make a vector with the column names of data.defa, will be used later to fill in data.defb
     col_names <- c(colnames(data_sub))
     #Remove the first elements of col_names because it is just a columns containing names
@@ -79,37 +65,19 @@ gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_
     }
     #Add column names to the formatted table
     colnames(data_for) <- c("gene", "group", "fpkm")
-    #Make box plots and export them as a .pdf or .png file
+    #Make box plots and export them as a .pdf file
     library(ggplot2)
-    if (pdf == TRUE) {
-        pdf(file=gr_name,height=h, width=w)
-        plot <- ggplot(data_for,aes(x=group,y=fpkm,fill=factor(group)))+
-        geom_boxplot(color="black") +
-        geom_point(aes(fill=factor(group)),color="black",shape=21,size=10/length(gene_names)) +
-        facet_wrap(~ gene,scales="free_y",nrow=nrow) +
-        theme(legend.position="none",
-        axis.text.x=element_text(size=(22/length(gene_names)*2),face="bold",color="black",angle=45,vjust=1,hjust=1),
-        axis.text.y=element_text(size=16,face="bold"),
-        axis.title.y=element_text(size=22,face="bold",vjust=1.5),
-        strip.text.x=element_text(size=20,face="bold")) +
-        xlab("") + ylab("Normalized FPKM")
-        print(plot)
-        dev.off()
-    }
-    else {
-        #Make box plots and export them as a .png file
-        png(file=gr_name, width=w, height=h, units="in", res=72)
-        plot <- ggplot(data_for,aes(x=group,y=fpkm,fill=factor(group)))+
-        geom_boxplot(color="black") +
-        geom_point(aes(fill=factor(group)),color="black",shape=21,size=10/length(gene_names)) +
-        facet_wrap(~ gene,scales="free_y",nrow=nrow) +
-        theme(legend.position="none",
-        axis.text.x=element_text(size=(22/length(gene_names)*2),face="bold",color="black",angle=45,vjust=1,hjust=1),
-        axis.text.y=element_text(size=16,face="bold"),
-        axis.title.y=element_text(size=22,face="bold",vjust=1.5),
-        strip.text.x=element_text(size=20,face="bold")) +
-        xlab("") + ylab("Normalized FPKM")
-        print(plot)
-        dev.off()
-    }
+    pdf(file=pdf,width=w, height=h)
+    plot <- ggplot(data_for,aes(x=group,y=fpkm,fill=factor(group)))+
+    geom_boxplot(color="black") +
+    geom_point(aes(fill=factor(group)),color="black",shape=21,size=10/length(gene_names)) +
+    facet_wrap(~ gene,scales="free_y",nrow=nrow) +
+    theme(legend.position="none",
+    axis.text.x=element_text(size=(22/length(gene_names)*2),face="bold",color="black",angle=45,vjust=1,hjust=1),
+    axis.text.y=element_text(size=16,face="bold"),
+    axis.title.y=element_text(size=22,face="bold",vjust=1.5),
+    strip.text.x=element_text(size=20,face="bold")) +
+    xlab("") + ylab("Normalized FPKM")
+    print(plot)
+    dev.off()
 }

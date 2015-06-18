@@ -82,34 +82,23 @@ gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_
     #Make box plots and export them as a .pdf or .png file
     library(ggplot2)
     if (pdf == TRUE) {
+        #Export file is a pdf file
         pdf(file=gr_name,height=h, width=w)
-        plot <- ggplot(data_for,aes(x=group,y=fpkm,fill=factor(group)))+
-        geom_boxplot(color="black") +
-        geom_point(aes(fill=factor(group)),color="black",shape=21,size=10/length(gene_names)) +
-        facet_wrap(~ gene,scales="free_y",nrow=nrow) +
-        theme(legend.position="none",
-        axis.text.x=element_text(size=(22/length(gene_names)*2),face="bold",color="black",angle=45,vjust=1,hjust=1),
-        axis.text.y=element_text(size=16,face="bold"),
-        axis.title.y=element_text(size=22,face="bold",vjust=1.5),
-        strip.text.x=element_text(size=20,face="bold")) +
-        xlab("") + ylab("Normalized FPKM")
-        print(plot)
-        dev.off()
     }
     else {
-        #Make box plots and export them as a .png file
+        #Export file is a png file
         png(file=gr_name, width=w, height=h, units="in", res=72)
-        plot <- ggplot(data_for,aes(x=group,y=fpkm,fill=factor(group)))+
-        geom_boxplot(color="black") +
-        geom_point(aes(fill=factor(group)),color="black",shape=21,size=10/length(gene_names)) +
-        facet_wrap(~ gene,scales="free_y",nrow=nrow) +
-        theme(legend.position="none",
-        axis.text.x=element_text(size=(22/length(gene_names)*2),face="bold",color="black",angle=45,vjust=1,hjust=1),
-        axis.text.y=element_text(size=16,face="bold"),
-        axis.title.y=element_text(size=22,face="bold",vjust=1.5),
-        strip.text.x=element_text(size=20,face="bold")) +
-        xlab("") + ylab("Normalized FPKM")
-        print(plot)
-        dev.off()
     }
+    plot <- ggplot(data_for,aes(x=group,y=fpkm,fill=factor(group)))+
+    geom_boxplot(color="black") +
+    geom_point(aes(fill=factor(group)),color="black",shape=21,size=10/length(gene_names)) +
+    facet_wrap(~ gene,scales="free_y",nrow=nrow) +
+    theme(legend.position="none",
+    axis.text.x=element_text(size=(22/length(gene_names)*2),face="bold",color="black",angle=45,vjust=1,hjust=1),
+    axis.text.y=element_text(size=16,face="bold"),
+    axis.title.y=element_text(size=22,face="bold",vjust=1.5),
+    strip.text.x=element_text(size=20,face="bold")) +
+    xlab("") + ylab("Normalized FPKM")
+    print(plot)
+    dev.off()
 }

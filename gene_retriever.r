@@ -4,7 +4,7 @@
 #
 #REQUIRES: Input File's first column must be NCBI format gene names and the remaining columns must be fpkm data
 #
-gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_name= "gr_output.pdf", w=8, h=11, pdf=TRUE) {
+gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_name= "gr_output.pdf", w=8, h=11, pdf=TRUE, heatmap=0, hw=15, hh=15) {
     
     #Read in data from genes.count_table file
     #wd_cound is the string that results from concatenating the directory location and file name
@@ -87,7 +87,7 @@ gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_
     }
     else {
         #Export file is a png file
-        png(file=gr_name, width=w, height=h, units="in", res=72)
+        png(file=gr_name, width=w, height=h, units="in", res=144)
     }
     plot <- ggplot(data_for,aes(x=group,y=fpkm,fill=factor(group)))+
     geom_boxplot(color="black") +
@@ -100,5 +100,25 @@ gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_
     strip.text.x=element_text(size=20,face="bold")) +
     xlab("") + ylab("Normalized FPKM")
     print(plot)
+    if (heatmap != 0) {
+        library(pheatmap)
+        library(RColorBrewer)
+        #Need matrix. So first make rownames the names of the genes
+        rownames(data_sub) <- gene_names
+        #Next get rid of the gene_short_name column
+        data_sub$gene_short_name <- NULL
+        png(file=heatmap, width=w, height=h, units="in", res=144)
+        # subset dataframe 'data.1' to rows in which standard deviation is not equal to 0, ignoring NA values
+        data_sub2 <- data_sub[apply(data_sub, 1, sd, na.rm=TRUE) != 0,]
+        heat<-pheatmap(data_sub2,scale="row",clustering_method="average",color=colorRampPalette(rev(brewer.pal(n = 7, name ="RdYlBu")))(300),main="Gene Retriever Heatmap",border_color="black",cellwidth=hw,cellheight=hh,show_rownames=TRUE,fontsize=12,filename=heatmap)
+        print(heat)
+    }
     dev.off()
 }
+
+
+
+
+
+
+

@@ -9,9 +9,15 @@
 
 In order to use this function, you must have access to R. The function name is gene_retriever().
 
+## Installation
+```R
+install.packages("devtools")
+library("devtools")
+devtools::install_github("hilldr/gene_retriever/GeneRetriever")
+```
 ##R installation instructions for Mac OSX and Windows:
 
-    http://cran.r-project.org/mirrors.html will lead you to a list of mirrors through which you can download R. Click on a mirror (anyone works) and then click on the download link that is appropriate for your operating system (Linus, Mac, or Windows). Follow instructions in order to install R.
+    http://cran.r-project.org/mirrors.html will lead you to a list of mirrors through which you can download R. Click on a mirror (anyone works) and then click on the download link that is appropriate for your operating system (Linux, Mac, or Windows). Follow instructions to install R.
 
 ##List of required packages (e.g. 'ggplot2') and all R commands necessary for installation:
 
@@ -26,7 +32,9 @@ In order to use this function, you must have access to R. The function name is g
 
 ##How to load 'gene retriever()' into R:
 
-    In order to load gene_retriever, navigate to your working directory (directions above) and then type source("gene_retriever.r")
+```R
+library("GeneRetriever")
+```
 
 ##How to call gene_retriever() and what each of the options specifies:
 

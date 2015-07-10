@@ -1,9 +1,14 @@
+#' GeneRetriever
+#'
+#' This function formats cuffdiff format gene expression data into a table and plot the data as box plots or heatmaps to provide a easy to read visual representation of the data.
 ## DATE: 6/2/15
 ## AUTHOR: Shrikar Thodla and David Hill
-## PURPOSE: To format gene expression data in a table and plot the data as box plots to provide a easy to read visual representation of the data. This function takes in 5 arguments. The first argument is a vector of gene names (as strings), the second argument is how many rows you want in the .pdf file. The third argument is the name of the directory that contains from where to get the data. The fourth argument is the name of .csv file that is exported from the program. The fifth (last) argument is the name of the .pdf file that will be exported from the program.
-#
-#REQUIRES: Input File's first column must be NCBI format gene names and the remaining columns must be fpkm data
-#
+#' @param gene_names This first argument is a vector of gene names (as string),
+#' @param nrow The number of rows in boxplot array
+#' @export
+#' @examples
+#' gene_retriever()
+
 gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_name= "gr_output.pdf", w=8, h=11, pdf=TRUE, heatmap=0, hw=15, hh=15) {
     
     #Read in data from genes.count_table file

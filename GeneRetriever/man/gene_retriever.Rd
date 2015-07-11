@@ -4,16 +4,43 @@
 \alias{gene_retriever}
 \title{GeneRetriever}
 \usage{
-gene_retriever(gene_names, nrow = 3, dir = "./", csv.out = "output.csv",
-  gr_name = "gr_output.pdf", w = 8, h = 11, pdf = TRUE, heatmap = 0,
-  hw = 15, hh = 15)
+gene_retriever(gene_names, nrow = 3, dir = "./",
+  csv.out = "gr_output.csv", gr_name = "gr_output.pdf", w = 8, h = 11,
+  pdf = TRUE, heatmap = FALSE, hm_name = "gr_heatmap.pdf",
+  cellwidth = 30, cellheight = 30)
+}
+\arguments{
+\item{gene_names}{This first argument is a vector of gene names (as string). Genenames MUST be NCBI Genbank format.}
+
+\item{nrow}{The number of rows in boxplot array. Default 3}
+
+\item{dir}{The directory containing CuffNorm format output files.}
+
+\item{csv.out}{Name and location of the CSV file output. Default "gr_output.csv"}
+
+\item{gr_name}{Name of boxplot pdf output. Default "gr_output.pdf"}
+
+\item{w}{Width in inches of the boxplot output. Default 8}
+
+\item{h}{Height in inches of the boxplot output. Default 11}
+
+\item{pdf}{Boolean operator controlling PDF output. FALSE returns PNG output. Default TRUE}
+
+\item{heatmap}{Boolean operator controlling heatmap output. TRUE returns heatmap plot. Default is FALSE}
+
+\item{hm_name}{Name of heatmap output. Default is "gr_heatmap.pdf"}
+
+\item{cellwidth}{Heatmap cell width in px. Default 30}
+
+\item{cellheight}{Heatmap cell height in px. Default 30}
+}
+\value{
+Normalized FPKM matrix containing the specified subset of genes accross all samples. Additional options will plot expression of individual genes as box plots and/or a heatmap with hierarchical clustering
 }
 \description{
-This function formats cuffdiff format gene expression data into a table and plot the data as box plots or heatmaps to provide a easy to read visual representation of the data.
-param gene_names This first argument is a vector of gene names (as string),
-param nrow The number of rows in boxplot array
+This function searches cuffnorm format gene expression data for user specified genes and generates a normalized FPKM table and box plots and/or a heatmap with hierarchical clustering.
 }
 \examples{
-gene_retriever()
+gene_retriever(gene_names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./DATA/norm_out", pdf = TRUE, heatmap = TRUE)
 }
 

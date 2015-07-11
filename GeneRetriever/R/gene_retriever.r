@@ -1,15 +1,36 @@
 #' GeneRetriever
 #'
-#' This function formats cuffdiff format gene expression data into a table and plot the data as box plots or heatmaps to provide a easy to read visual representation of the data.
-## DATE: 6/2/15
-## AUTHOR: Shrikar Thodla and David Hill
-#' @param gene_names This first argument is a vector of gene names (as string),
-#' @param nrow The number of rows in boxplot array
+#' This function searches cuffnorm format gene expression data for user specified genes and generates a normalized FPKM table and box plots and/or a heatmap with hierarchical clustering.
+#' @param gene_names This first argument is a vector of gene names (as string). Genenames MUST be NCBI Genbank format.
+#' @param nrow The number of rows in boxplot array. Default 3
+#' @param dir The directory containing CuffNorm format output files. 
+#' @param csv.out Name and location of the CSV file output. Default "gr_output.csv"
+#' @param gr_name Name of boxplot pdf output. Default "gr_output.pdf"
+#' @param w Width in inches of the boxplot output. Default 8
+#' @param h Height in inches of the boxplot output. Default 11
+#' @param pdf Boolean operator controlling PDF output. FALSE returns PNG output. Default TRUE
+#' @param heatmap Boolean operator controlling heatmap output. TRUE returns heatmap plot. Default is FALSE
+#' @param hm_name Name of heatmap output. Default is "gr_heatmap.pdf"
+#' @param cellwidth Heatmap cell width in px. Default 30
+#' @param cellheight Heatmap cell height in px. Default 30
+#' @return Normalized FPKM matrix containing the specified subset of genes accross all samples. Additional options will plot expression of individual genes as box plots and/or a heatmap with hierarchical clustering
 #' @export
 #' @examples
-#' gene_retriever()
+#' gene_retriever(gene_names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./DATA/norm_out", pdf = TRUE, heatmap = TRUE)
 
-gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_name= "gr_output.pdf", w=8, h=11, pdf=TRUE, heatmap=0, hw=15, hh=15) {
+gene_retriever <- function(gene_names,
+                           nrow =3,
+                           dir = "./",
+                           csv.out ="gr_output.csv",
+                           gr_name = "gr_output.pdf",
+                           w = 8,
+                           h = 11,
+                           pdf = TRUE,
+                           heatmap = FALSE,
+                           hm_name = "gr_heatmap.pdf",
+                           cellwidth = 30,
+                           cellheight = 30)
+{
     
     #Read in data from genes.count_table file
     #wd_cound is the string that results from concatenating the directory location and file name
@@ -56,6 +77,7 @@ gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_
         len_gen_names = new_len_gen
     }
     #Export subsetted data as a .csv file
+    print(paste("Writing retrieved FPKM table as",csv.out))
     write.csv(data_sub,file=csv.out, row.names = FALSE)
     #data.defa will have multiple different columns, but the first column is just gene names, which we don't care about. That's why we subtract 1 from the number of columns in data.defa
     col_use = ncol(data_sub) - 1
@@ -87,11 +109,13 @@ gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_
     #Make box plots and export them as a .pdf or .png file
     library(ggplot2)
     if (pdf == TRUE) {
+        print("Generating boxplot(s) as PDF")
         #Export file is a pdf file
         pdf(file=gr_name,height=h, width=w)
     }
     else {
         #Export file is a png file
+        print("Generating boxplot(s) as PNG")
         png(file=gr_name, width=w, height=h, units="in", res=144)
     }
     plot <- ggplot(data_for,aes(x=group,y=fpkm,fill=factor(group)))+
@@ -104,25 +128,63 @@ gene_retriever <- function(gene_names,nrow=3, dir= "./",csv.out="output.csv",gr_
     axis.title.y=element_text(size=22,face="bold",vjust=1.5),
     strip.text.x=element_text(size=20,face="bold")) +
     xlab("") + ylab("Normalized FPKM")
-    print(plot)
-    if (heatmap != 0) {
+    #print(plot)
+    if (heatmap == TRUE) {
         library(pheatmap)
         library(RColorBrewer)
         #Need matrix. So first make rownames the names of the genes
         rownames(data_sub) <- gene_names
         #Next get rid of the gene_short_name column
         data_sub$gene_short_name <- NULL
-        png(file=heatmap, width=w, height=h, units="in", res=144)
+        if (pdf == TRUE) {
+        #Export file is a pdf file
+        print("Generating heatmap as PDF")    
+        pdf(file=hm_name)
+    }
+        else {
+        #Export file is a png file
+        print("Generating heatmap as PNG")    
+        png(file=hm_name, width=w, height=h, units="in", res=144)
+     }
         # subset dataframe 'data.1' to rows in which standard deviation is not equal to 0, ignoring NA values
         data_sub2 <- data_sub[apply(data_sub, 1, sd, na.rm=TRUE) != 0,]
-        heat<-pheatmap(data_sub2,scale="row",clustering_method="average",color=colorRampPalette(rev(brewer.pal(n = 7, name ="RdYlBu")))(300),main="Gene Retriever Heatmap",border_color="black",cellwidth=hw,cellheight=hh,show_rownames=TRUE,fontsize=12,filename=heatmap)
-        print(heat)
+        heat <- pheatmap(data_sub2,
+                         scale="row",
+                         clustering_method="average",
+                         color=colorRampPalette(rev(brewer.pal(n = 7, name ="RdYlBu")))(300),
+                         main="Gene Retriever Heatmap",
+                         border_color="black",
+                         cellwidth=cellwidth,
+                         cellheight=cellheight,
+                         show_rownames=TRUE,
+                         fontsize=12,
+                         filename=hm_name)
+       # print(heat)
+    }
+    else {
+        print("Heatmap output disabled.")
+        print("Set heatmap = TRUE to generate heatmap")
     }
     dev.off()
 }
 
 
+## Gene Retriever
+## Copyright (C) 2015  David R. Hill and Shrikar Thodla
 
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+
+## You should have received a copy of the GNU General Public License along
+## with this program; if not, write to the Free Software Foundation, Inc.,
+## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
 

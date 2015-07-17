@@ -1,8 +1,16 @@
 Package: GeneRetriever
 Title: RETRIEVES LIST OF GENES FROM CUFFNORM OUTPUT
-Version: 0.0.0.9000
-Authors@R: person("David", "Hill", email = "hilldr@med.umich.edu", role = "cre")
+Version: 0.2
+Date: 2015-07-17
+Authors@R: c(person("David", "Hill", role = c("aut","cre"),
+	   email = "hilldr@med.umich.edu"),
+	   person("Shrikar", "Thodla", role = c("aut","cre"),
+	   email = "sthodla@umich.edu"))
+Author: David Hill [aut, cre],
+	Shrikar Thodla [aut, cre]
+Maintainer: David Hill <hilldr@med.umich.edu>
 Description: What the package does (one paragraph)
-Depends: R (>= 3.2.1)
-License: GNU GPL V2.0
+Depends: R (>= 3.2.1), ggplot2, pheatmap, RColorBrewer
+License: GPL (>= 2)
+URL: https://github.com/hilldr/gene_retriever
 LazyData: true

@@ -28,20 +28,21 @@ install.packages("devtools")
 library("devtools")
 devtools::install_github("hilldr/gene_retriever/GeneRetriever")
 ```
-##How to load 'gene retriever()' into R:
 
+## Example
 ```R
-library("GeneRetriever")
+library("GeneRetriever") # Loads the GeneRetriever function library
+getGRexample() # Downloads and unpacks example dataset in working directory
+GeneRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", pdf = TRUE, heatmap = TRUE) # Generates output files in the working directory
 ```
+##Boxplots
+
+Not sure how to interpret boxplots? Here is a link to help you understand box plotsthat you may find helpful: http://www.wellbeingatschool.org.nz/information-sheet/understanding-and-interpreting-box-plots
 
 ## User options and examples
 ```R
 ?gene_retriever
 ```
-
-##Boxplots
-
-Not sure how to interpret boxplots? Here is a link to help you understand box plotsthat you may find helpful: http://www.wellbeingatschool.org.nz/information-sheet/understanding-and-interpreting-box-plots
 
 ##Please report all errors:
 Please report all errors to Shrikar Thodla at sthodla@umich.edu with gene_retriever error as the subject.

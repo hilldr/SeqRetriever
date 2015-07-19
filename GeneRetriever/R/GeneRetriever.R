@@ -46,7 +46,7 @@ GeneRetriever <- function(gene.names,
   data1 <- cbind(attr.table$gene_short_name, data1)
   colnames(data1)[1] <- "gene_short_name"
     
-  # Start making the table that will contain the gene expression data of the gene
+  # Start making the table that will contain the gene expression data
   # given to the function. Start with the first gene in the vector
   data.sub <- subset(data1, data1[, 1] == gene.names[1])
     

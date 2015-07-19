@@ -16,7 +16,8 @@
 #' @return Normalized FPKM matrix containing the specified subset of genes accross all samples. Additional options will plot expression of individual genes as box plots and/or a heatmap with hierarchical clustering
 #' @export
 #' @examples
-#' GeneRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./DATA/norm_out", pdf = TRUE, heatmap = TRUE)
+#' getGRexample() # Downloads and unpacks example dataset in working directory
+#' GeneRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", pdf = TRUE, heatmap = TRUE)
 
 GeneRetriever <- function(gene.names,
                            nrow = 3,

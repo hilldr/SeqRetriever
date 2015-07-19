@@ -7,7 +7,7 @@
 #' @examples
 #' getGRexample()
 
-getGRexample <- function(url="https://github.com/hilldr/gene_retriever/raw/getGRexample/example_normout.tar.gz")
+getGRexample <- function(url="https://github.com/hilldr/gene_retriever/raw/master/example_normout.tar.gz")
 {
   download.file(url=url,method="wget",destfile="example_normout.tar.gz")
   untar("example_normout.tar.gz")

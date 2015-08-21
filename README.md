@@ -1,10 +1,8 @@
-**GENE RETRIEVER**
+**SeqRetriever**
 
-**AUTHORS:** Shrikar Thodla and David Hill
+**AUTHORS:** David R. Hill and Shrikar Thodla
 
 **PURPOSE:** To format gene expression data in a table and plot the data as box plots to generate an easy to read visual representation of the data. 
-
-
 
 ##R installation instructions for Mac OSX and Windows:
  http://cran.r-project.org/mirrors.html will lead you to a list of mirrors through which you can download R. Click on a mirror and then click on the download link that is appropriate for your operating system (Linux, Mac, or Windows). Follow instructions to install R.

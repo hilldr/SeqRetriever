@@ -1,19 +1,22 @@
-#' getGRexample
+
+#' getSRexample
 #'
-#' This function downloads and unpacks an example dataset in the working directory. See ?GeneRetriever for additional examples.
+#' This function downloads and unpacks an example dataset in the working directory. See ?SeqRetriever for additional examples.
 #' @param url Specifies the URL path of the file to download.
 #' @return Downloads an example dataset in the working directory
 #' @export
 #' @examples
-#' getGRexample()
+#' getSRexample()
 
 getGRexample <- function(url="https://github.com/hilldr/gene_retriever/raw/master/example_normout.tar.gz")
+
 {
+  # DOWNLOAD AND EXTRACT EXAMPLE CUFFNORM DATASET
   download.file(url=url,method="wget",destfile="example_normout.tar.gz")
   untar("example_normout.tar.gz")
 }
 
-## GeneRetriever
+## SeqRetriever
 ## Copyright (C) 2015  David R. Hill and Shrikar Thodla
 
 ## This program is free software; you can redistribute it and/or modify

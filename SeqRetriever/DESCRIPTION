@@ -1,5 +1,5 @@
 
-Package: GeneRetriever
+Package: SeqRetriever
 Title: RETRIEVES LIST OF GENES FROM CUFFNORM OUTPUT
 Version: 0.2
 Date: 2015-07-17

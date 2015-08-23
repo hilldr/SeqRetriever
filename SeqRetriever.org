@@ -1,5 +1,5 @@
 #    -*- mode: org -*-
-# Time-stamp: <2015-08-23 16:52:24 (david)>
+# Time-stamp: <2015-08-23 19:33:35 (david)>
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
 #+EMAIL: hilldr@med.umich.edu
@@ -17,7 +17,7 @@ data.
 #+BEGIN_SRC R
     install.packages("devtools")
     library("devtools")
-    devtools::install_github("hilldr/gene_retriever/GeneRetriever")
+    devtools::install_github("hilldr/gene_retriever/SeqRetriever")
 #+END_SRC
 
 ** R installation instructions for Mac OSX and Windows:
@@ -29,7 +29,7 @@ click on the download link that is appropriate for your operating system
 
 ** Required packages
 
-GeneRetriever requires installation of several additional R packages.
+SeqRetriever requires installation of several additional R packages.
 
 #+BEGIN_EXAMPLE
     - ggplot2
@@ -48,9 +48,9 @@ your R installation includes the required packages:
 * Example
 
 #+BEGIN_SRC R
-    library("GeneRetriever") # Loads the GeneRetriever function library
-    getGRexample() # Downloads and unpacks example dataset in working directory
-    GeneRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", pdf = TRUE, heatmap = TRUE) # Generates output files in the working directory
+    library("SeqRetriever") # Loads the SeqRetriever function library
+    getSRexample() # Downloads and unpacks example dataset in working directory
+    SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", pdf = TRUE, heatmap = TRUE) # Generates output files in the working directory
 #+END_SRC
 
 ** FPKM matrix output
@@ -73,18 +73,18 @@ http://www.wellbeingatschool.org.nz/information-sheet/understanding-and-interpre
 ** Additional user options and examples
 
 #+BEGIN_SRC R
-    ?GeneRetriever
+    ?SeqRetriever
 #+END_SRC
 
 * Please report all errors
 Please report all errors to David Hill at hilldr@med.umich.edu with
-"GeneRetriever error" as the subject.
+"SeqRetriever error" as the subject.
 
 * Source code
  # org-babel-tangle C-c C-v t
 ** Description file
 #+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/DESCRIPTION
-Package: GeneRetriever
+Package: SeqRetriever
 Title: RETRIEVES LIST OF GENES FROM CUFFNORM OUTPUT
 Version: 0.2
 Date: 2015-07-17
@@ -125,7 +125,7 @@ LazyData: true
 #' @export
 #' @examples
 #' getSRexample() # Downloads and unpacks example dataset in working directory
-#' GeneRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE)
+#' SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE)
 #+END_SRC
 
 *** Name function and specify default options
@@ -268,6 +268,7 @@ SeqRetriever <- function(gene.names,
       print("Set heatmap = TRUE to generate heatmap")
       dev.off()
     }
+}
 #+END_SRC
 
 *** License
@@ -288,6 +289,7 @@ SeqRetriever <- function(gene.names,
 ## You should have received a copy of the GNU General Public License along
 ## with this program; if not, write to the Free Software Foundation, Inc.,
 ## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
 #+END_SRC
 
 ** FUNCTION: getSRexample()
@@ -306,7 +308,7 @@ SeqRetriever <- function(gene.names,
 
 *** Name function and specify default options
 #+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/getSRexample.R
-getGRexample <- function(url="https://github.com/hilldr/gene_retriever/raw/master/example_normout.tar.gz")
+getSRexample <- function(url="https://github.com/hilldr/gene_retriever/raw/master/example_normout.tar.gz")
 #+END_SRC
 
 *** Download and extract example CuffNorm dataset
@@ -344,14 +346,29 @@ getGRexample <- function(url="https://github.com/hilldr/gene_retriever/raw/maste
 
 ** Process package documentation
 #+BEGIN_SRC R :session *R* :eval yes
+wd <- getwd()
+if (wd != "/home/david/development/SeqRetriever/SeqRetriever"){
+  setwd("./SeqRetriever")
+} else {
+  print("Already in the SeqRetriever working directory")
+}
+file.remove("NAMESPACE")
 library(roxygen2)
-setwd("./SeqRetriever")
+library(devtools)
+document()
 #+END_SRC
 
 #+RESULTS:
-: /home/david/development/SeqRetriever
 
 ** Install latest version from local source
 #+BEGIN_SRC R :session *R* :eval yes
-
+setwd("..")
+install("SeqRetriever")
 #+END_SRC
+
+#+RESULTS:
+: TRUE
+
+* DONE Remove all instances of "GeneRetriever" or "GR"
+
+* TODO Update image paths

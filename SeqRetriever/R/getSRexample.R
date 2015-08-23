@@ -8,7 +8,7 @@
 #' @examples
 #' getSRexample()
 
-getGRexample <- function(url="https://github.com/hilldr/gene_retriever/raw/master/example_normout.tar.gz")
+getSRexample <- function(url="https://github.com/hilldr/gene_retriever/raw/master/example_normout.tar.gz")
 
 {
   # DOWNLOAD AND EXTRACT EXAMPLE CUFFNORM DATASET

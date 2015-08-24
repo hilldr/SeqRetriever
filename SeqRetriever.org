@@ -1,5 +1,5 @@
 #    -*- mode: org -*-
-# Time-stamp: <2015-08-23 21:59:22 (david)>
+# Time-stamp: <2015-08-23 22:12:23 (david)>
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
 #+EMAIL: hilldr@med.umich.edu
@@ -16,7 +16,7 @@ install.packages("devtools")
 Then, install SeqRetriever as follows:
 #+BEGIN_SRC R :session *R* :eval yes
 library("devtools")
-devtools::install_github("hilldr/gene_retriever/SeqRetriever")
+devtools::install_github("hilldr/SeqRetriever/SeqRetriever")
 #+END_SRC
 
 ** Required packages
@@ -43,10 +43,13 @@ click on the download link that is appropriate for your operating system
 * Example
 
 #+BEGIN_SRC R :session *R*
-    library("SeqRetriever") # Loads the SeqRetriever function library
-    getSRexample() # Downloads and unpacks example dataset in working directory
-    SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxpot = TRUE, heatmap = TRUE) # Generates output files in the working directory
+library("SeqRetriever") # Loads the SeqRetriever function library
+getSRexample() # Downloads and unpacks example dataset in working directory
+SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE) # Generates output files in the working directory
 #+END_SRC
+
+#+RESULTS:
+: 3
 
 ** FPKM matrix output
 
@@ -87,7 +90,7 @@ Maintainer: David Hill <hilldr@med.umich.edu>
 Description: What the package does (one paragraph)
 Depends: R (>= 3.2.1), ggplot2, pheatmap, RColorBrewer, plyr, reshape
 License: GPL (>= 2)
-URL: https://github.com/hilldr/gene_retriever
+URL: https://github.com/hilldr/SeqRetriever
 LazyData: true
 #+END_SRC
 
@@ -297,7 +300,7 @@ SeqRetriever <- function(gene.names,
 
 *** Name function and specify default options
 #+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/getSRexample.R
-getSRexample <- function(url="https://github.com/hilldr/gene_retriever/raw/master/example_normout.tar.gz")
+getSRexample <- function(url="https://github.com/hilldr/SeqRetriever/raw/master/example_normout.tar.gz")
 #+END_SRC
 
 *** Download and extract example CuffNorm dataset
@@ -346,6 +349,8 @@ library(roxygen2)
 library(devtools)
 document()
 #+END_SRC
+
+#+RESULTS:
 
 ** Install latest version from local source
 #+BEGIN_SRC R :session *R* :eval yes

@@ -19,7 +19,7 @@ Then, install SeqRetriever as follows:
 
 ``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-eval="yes"}
 library("devtools")
-devtools::install_github("hilldr/gene_retriever/SeqRetriever")
+devtools::install_github("hilldr/SeqRetriever/SeqRetriever")
 ```
 
 Required packages
@@ -52,9 +52,13 @@ Example
 =======
 
 ``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*"}
-    library("SeqRetriever") # Loads the SeqRetriever function library
-    getSRexample() # Downloads and unpacks example dataset in working directory
-    SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxpot = TRUE, heatmap = TRUE) # Generates output files in the working directory
+library("SeqRetriever") # Loads the SeqRetriever function library
+getSRexample() # Downloads and unpacks example dataset in working directory
+SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE) # Generates output files in the working directory
+```
+
+``` {.example}
+3
 ```
 
 FPKM matrix output
@@ -107,7 +111,7 @@ Maintainer: David Hill <hilldr@med.umich.edu>
 Description: What the package does (one paragraph)
 Depends: R (>= 3.2.1), ggplot2, pheatmap, RColorBrewer, plyr, reshape
 License: GPL (>= 2)
-URL: https://github.com/hilldr/gene_retriever
+URL: https://github.com/hilldr/SeqRetriever
 LazyData: true
 ```
 
@@ -328,7 +332,7 @@ FUNCTION: getSRexample()
 ### Name function and specify default options
 
 ``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-eval="no" rundoc-exports="code" rundoc-tangle="./SeqRetriever/R/getSRexample.R"}
-getSRexample <- function(url="https://github.com/hilldr/gene_retriever/raw/master/example_normout.tar.gz")
+getSRexample <- function(url="https://github.com/hilldr/SeqRetriever/raw/master/example_normout.tar.gz")
 ```
 
 ### Download and extract example CuffNorm dataset

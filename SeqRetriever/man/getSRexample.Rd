@@ -5,7 +5,7 @@
 \title{getSRexample}
 \usage{
 
-  getSRexample(url = "https://github.com/hilldr/gene_retriever/raw/master/example_normout.tar.gz")
+  getSRexample(url = "https://github.com/hilldr/SeqRetriever/raw/master/example_normout.tar.gz")
 }
 \arguments{
 \item{url}{Specifies the URL path of the file to download.}

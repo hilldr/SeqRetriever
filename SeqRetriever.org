@@ -1,5 +1,5 @@
 #    -*- mode: org -*-
-# Time-stamp: <2015-08-23 19:33:35 (david)>
+# Time-stamp: <2015-08-23 21:51:46 (david)>
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
 #+EMAIL: hilldr@med.umich.edu
@@ -14,7 +14,7 @@ data.
 
 * Installation
 
-#+BEGIN_SRC R
+#+BEGIN_SRC R :session *R*
     install.packages("devtools")
     library("devtools")
     devtools::install_github("hilldr/gene_retriever/SeqRetriever")
@@ -30,51 +30,44 @@ click on the download link that is appropriate for your operating system
 ** Required packages
 
 SeqRetriever requires installation of several additional R packages.
-
-#+BEGIN_EXAMPLE
     - ggplot2
     - pheatmap
     - RColorBrewer
     - plyr
-#+END_EXAMPLE
+    - reshape
 
-Run the following command in the R console if you are unsure whether
-your R installation includes the required packages:
+You will be prompted to install these pachages during the SeqRetriever installation process. Alternately, you may run the following command in the R console prior to installing SeqReriever:
 
-#+BEGIN_SRC R
-    install.packages(c("ggplot2","pheatmap","RColorBrewer"))
+#+BEGIN_SRC R :session *R*
+    install.packages(c("ggplot2","pheatmap","RColorBrewer","plyr","reshape"))
 #+END_SRC
 
 * Example
 
-#+BEGIN_SRC R
+#+BEGIN_SRC R :session *R*
     library("SeqRetriever") # Loads the SeqRetriever function library
     getSRexample() # Downloads and unpacks example dataset in working directory
-    SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", pdf = TRUE, heatmap = TRUE) # Generates output files in the working directory
+    SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxpot = TRUE, heatmap = TRUE) # Generates output files in the working directory
 #+END_SRC
 
 ** FPKM matrix output
 
-[[./GRoutput.csv][Example FPKM matrix output]]
+[[./SRoutput.csv][Example FPKM matrix output]]
 
 ** Boxplot output
-
-#+CAPTION: alt text
-
-[[./GRoutput.png]]
+[[./SRoutput.png]]
 This link will help you lern to interpret boxplots:
 http://www.wellbeingatschool.org.nz/information-sheet/understanding-and-interpreting-box-plots
 
 ** Heatmap output
-
-#+CAPTION: alt text
-
-[[./GRheatmap.png]]
+[[./SRheatmap.png]]
 ** Additional user options and examples
 
-#+BEGIN_SRC R
-    ?SeqRetriever
+#+BEGIN_SRC R :session *R*
+?SeqRetriever
 #+END_SRC
+
+#+RESULTS:
 
 * Please report all errors
 Please report all errors to David Hill at hilldr@med.umich.edu with
@@ -87,7 +80,7 @@ Please report all errors to David Hill at hilldr@med.umich.edu with
 Package: SeqRetriever
 Title: RETRIEVES LIST OF GENES FROM CUFFNORM OUTPUT
 Version: 0.2
-Date: 2015-07-17
+Date: 2015-08-23
 Authors@R: c(person("David", "Hill", role = c("aut","cre"),
 	   email = "hilldr@med.umich.edu"),
 	   person("Shrikar", "Thodla", role = c("aut","cre"),
@@ -359,6 +352,7 @@ document()
 #+END_SRC
 
 #+RESULTS:
+: /home/david/projects/gene_retriever/SeqRetriever
 
 ** Install latest version from local source
 #+BEGIN_SRC R :session *R* :eval yes
@@ -369,6 +363,9 @@ install("SeqRetriever")
 #+RESULTS:
 : TRUE
 
-* DONE Remove all instances of "GeneRetriever" or "GR"
+** Uninstall SeqRetriever
+#+BEGIN_SRC R :session *R* :eval yes
+remove.packages("SeqRetriever")
+#+END_SRC
 
-* TODO Update image paths
+* TODO Write description of SeqRetriever

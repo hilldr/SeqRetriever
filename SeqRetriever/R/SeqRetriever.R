@@ -18,7 +18,7 @@
 #' @export
 #' @examples
 #' getSRexample() # Downloads and unpacks example dataset in working directory
-#' GeneRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE)
+#' SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE)
 
 SeqRetriever <- function(gene.names,
                            nrow = 3,

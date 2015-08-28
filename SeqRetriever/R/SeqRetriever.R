@@ -86,30 +86,31 @@ if (boxplot == TRUE) {
     #Export file is a png file
     print(paste("Generating boxplot(s) and saving as",bp.name))
     png(file = bp.name, width = w, height = h, units = "in", res = 144)
-  } else {
+    plot <- ggplot(melt.data,aes(x = group, y = fpkm, fill = factor(group)))+
+            geom_boxplot(color = "black") +
+            geom_point(aes(x = group, y = fpkm, fill = factor(group)),
+                       color = "black", shape = 21, size = 18/length(gene.names)) +
+            facet_wrap(~ gene, scales = "free_y",nrow = nrow) +
+            theme(legend.position = "none",
+                  axis.text.x = element_text(size = (42/length(gene.names)*2),
+                                             face = "bold",
+                                             color = "black",
+                                             angle = 45,
+                                             vjust = 1,hjust = 1),
+                  axis.text.y = element_text(size = 18,
+                                             face = "bold"),
+                  axis.title.y = element_text(size = 22,
+                                              face = "bold",
+                                              vjust = 1.5),
+                  strip.text.x = element_text(size = 22,
+                                              face = "bold")) +
+            xlab("") +
+            ylab("Normalized FPKM")
+    print(plot)
+    dev.off()
+} else {
     print("Boxplot output disabled. Set boxplot = TRUE to enable")
-  }
-plot <- ggplot(melt.data,aes(x = group, y = fpkm, fill = factor(group)))+
-        geom_boxplot(color = "black") +
-        geom_point(aes(x = group, y = fpkm, fill = factor(group)),
-                   color = "black", shape = 21, size = 18/length(gene.names)) +
-        facet_wrap(~ gene, scales = "free_y",nrow = nrow) +
-        theme(legend.position = "none",
-              axis.text.x = element_text(size = (42/length(gene.names)*2),
-                                       face = "bold",
-                                       color = "black",
-                                       angle = 45,
-                                       vjust = 1,hjust = 1),
-              axis.text.y = element_text(size = 18,
-                                       face = "bold"),
-              axis.title.y = element_text(size = 22,
-                                        face = "bold",
-                                        vjust = 1.5),
-              strip.text.x = element_text(size = 22,
-                                        face = "bold")) +
-        xlab("") +
-        ylab("Normalized FPKM")
-print(plot)
+}
 
 #############
   ## HEATMAP ##
@@ -140,11 +141,9 @@ print(plot)
                show_rownames = TRUE,
                fontsize = 12,
                filename = hm.name)
-      dev.off()
   } else {
       print("Heatmap output disabled.")
       print("Set heatmap = TRUE to generate heatmap")
-      dev.off()
     }
 }
 

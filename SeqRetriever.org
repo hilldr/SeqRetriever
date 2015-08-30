@@ -1,5 +1,6 @@
 #    -*- mode: org -*-
-# Time-stamp: <2015-08-30 17:41:53 (david)>
+# Time-stamp: <2015-08-30 18:09:02 (david)>
+#+STARTUP: overview
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
 #+EMAIL: hilldr@med.umich.edu
@@ -335,7 +336,58 @@ getSRexample <- function(url="https://github.com/hilldr/SeqRetriever/raw/master/
 ## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #+END_SRC
 
+** FUNCTION: SeqDataframe()
 
+***  Contents of ?SeqDataframe
+#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
+  #' SeqDataframe
+  #'
+  #' This function accepts cuffnorm format fpkm counts and returns a formatted R dataframe
+#+END_SRC
+#+RESULTS:
+
+*** Import data from CUFFNORM outpur and return dataframe
+#+BEGIN_SRC R :session *R* :eval yes :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
+  SeqDataframe <- function(dir = "./")
+  {
+    ######################################
+    ## IMPORT DATA FROM CUFFNORM OUTPUT ##
+    ######################################
+    # dir.count is a string for the count table location
+    dir.count <- paste(dir, "/genes.count_table", sep="")
+    # read in the count table from dir.count
+    counts <- read.table(dir.count, header=TRUE, sep="\t", stringsAsFactors = FALSE)
+    # Read in data attributes from genes.attr_table file
+    dir.attr <- paste(dir,"/genes.attr_table", sep="")
+    attr <- read.table(dir.attr, header=TRUE, sep="\t", stringsAsFactors = FALSE)
+    # Bind the gene_short_name from the attr.table to data1,
+    # gene_short_name is the first column in data1
+    data1 <- cbind(attr, counts)
+    return(data1)
+  }
+#+END_SRC
+
+#+RESULTS:
+
+*** License
+#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
+  ## SeqRetriever
+  ## Copyright (C) 2015  David R. Hill and Shrikar Thodla
+
+  ## This program is free software; you can redistribute it and/or modify
+  ## it under the terms of the GNU General Public License as published by
+  ## the Free Software Foundation; either version 2 of the License, or
+  ## (at your option) any later version.
+
+  ## This program is distributed in the hope that it will be useful,
+  ## but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ## GNU General Public License for more details.
+
+  ## You should have received a copy of the GNU General Public License along
+  ## with this program; if not, write to the Free Software Foundation, Inc.,
+  ## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#+END_SRC
 * Useful operations
 
 ** Process package documentation

@@ -1,0 +1,73 @@
+#    -*- mode: org -*-
+# Time-stamp: <2015-08-31 15:09:18 (david)>
+#+STARTUP: overview
+#+TITLE: SeqRetriever
+#+AUTHOR: David R. Hill and Shrikar Thodla
+#+EMAIL: hilldr@med.umich.edu
+
+*AUTHORS:* David R. Hill and Shrikar Thodla
+
+*PURPOSE:* An orgiginal R package designed to format gene expression data in a table and plot the data as box plots to generate an easy to read visual representation of the data.
+
+* Installation
+If you have not installed the development tools package you will first need to install "devtools" in R to access the SeqRetriever repository on GitHub
+#+BEGIN_SRC R :session *R* :eval no
+install.packages("devtools")
+#+END_SRC
+Then, install SeqRetriever as follows:
+#+BEGIN_SRC R :session *R* :eval no
+library("devtools")
+devtools::install_github("hilldr/SeqRetriever/SeqRetriever")
+#+END_SRC
+
+** Required packages
+
+SeqRetriever requires installation of several additional R packages.
+    - ggplot2
+    - pheatmap
+    - RColorBrewer
+    - plyr
+    - reshape
+
+You will be prompted to install these pachages during the SeqRetriever installation process. Alternately, you may run the following command in the R console prior to installing SeqReriever:
+
+#+BEGIN_SRC R :session *R* :eval no
+    install.packages(c("ggplot2","pheatmap","RColorBrewer","plyr","reshape"))
+#+END_SRC
+
+*** R installation instructions for Mac OSX and Windows:
+http://cran.r-project.org/mirrors.html will lead you to a list of
+mirrors through which you can download R. Click on a mirror and then
+click on the download link that is appropriate for your operating system
+(Linux, Mac, or Windows). Follow instructions to install R.
+
+* Example
+
+#+BEGIN_SRC R :session *R* :eval no
+library("SeqRetriever") # Loads the SeqRetriever function library
+getSRexample() # Downloads and unpacks example dataset in working directory
+SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE) # Generates output files in the working directory
+#+END_SRC
+
+** FPKM matrix output
+
+[[./SRoutput.csv][Example FPKM matrix output]]
+
+** Boxplot output
+[[./SRoutput.png]]
+This link will help you learn to interpret boxplots:
+http://www.wellbeingatschool.org.nz/information-sheet/understanding-and-interpreting-box-plots
+
+** Heatmap output
+[[./SRheatmap.png]]
+** Additional user options and examples
+
+#+BEGIN_SRC R :session *R* :eval no
+?SeqRetriever
+#+END_SRC
+
+* Please report all errors
+Please report all errors to David Hill at hilldr@med.umich.edu with
+"SeqRetriever error" as the subject.
+
+* TODO Write description of SeqRetriever

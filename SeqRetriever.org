@@ -1,81 +1,9 @@
 #    -*- mode: org -*-
-# Time-stamp: <2015-08-30 18:09:02 (david)>
+# Time-stamp: <2015-08-31 15:01:08 (david)>
 #+STARTUP: overview
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
 #+EMAIL: hilldr@med.umich.edu
-
-*AUTHORS:* David R. Hill and Shrikar Thodla
-
-*PURPOSE:* An orgiginal R package designed to format gene expression data in a table and plot the data as box plots to generate an easy to read visual representation of the data.
-
-* Installation
-If you have not installed the development tools package you will first need to install "devtools" in R to access the SeqRetriever repository on GitHub
-#+BEGIN_SRC R :session *R* :eval yes
-install.packages("devtools")
-#+END_SRC
-Then, install SeqRetriever as follows:
-#+BEGIN_SRC R :session *R* :eval yes
-library("devtools")
-devtools::install_github("hilldr/SeqRetriever/SeqRetriever")
-#+END_SRC
-
-#+RESULTS:
-: TRUE
-
-** Required packages
-
-SeqRetriever requires installation of several additional R packages.
-    - ggplot2
-    - pheatmap
-    - RColorBrewer
-    - plyr
-    - reshape
-
-You will be prompted to install these pachages during the SeqRetriever installation process. Alternately, you may run the following command in the R console prior to installing SeqReriever:
-
-#+BEGIN_SRC R :session *R*
-    install.packages(c("ggplot2","pheatmap","RColorBrewer","plyr","reshape"))
-#+END_SRC
-
-*** R installation instructions for Mac OSX and Windows:
-http://cran.r-project.org/mirrors.html will lead you to a list of
-mirrors through which you can download R. Click on a mirror and then
-click on the download link that is appropriate for your operating system
-(Linux, Mac, or Windows). Follow instructions to install R.
-
-* Example
-
-#+BEGIN_SRC R :session *R*
-library("SeqRetriever") # Loads the SeqRetriever function library
-getSRexample() # Downloads and unpacks example dataset in working directory
-SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE) # Generates output files in the working directory
-#+END_SRC
-
-#+RESULTS:
-: 3
-
-** FPKM matrix output
-
-[[./SRoutput.csv][Example FPKM matrix output]]
-
-** Boxplot output
-[[./SRoutput.png]]
-This link will help you lern to interpret boxplots:
-http://www.wellbeingatschool.org.nz/information-sheet/understanding-and-interpreting-box-plots
-
-** Heatmap output
-[[./SRheatmap.png]]
-** Additional user options and examples
-
-#+BEGIN_SRC R :session *R*
-?SeqRetriever
-#+END_SRC
-
-* Please report all errors
-Please report all errors to David Hill at hilldr@med.umich.edu with
-"SeqRetriever error" as the subject.
-
 * Source code
  # org-babel-tangle C-c C-v t
 ** Description file
@@ -346,10 +274,9 @@ getSRexample <- function(url="https://github.com/hilldr/SeqRetriever/raw/master/
 #+END_SRC
 #+RESULTS:
 
-*** Import data from CUFFNORM outpur and return dataframe
+*** Import data from CUFFNORM output and return dataframe
 #+BEGIN_SRC R :session *R* :eval yes :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
-  SeqDataframe <- function(dir = "./")
-  {
+  SeqDataframe <- function(dir = "./"){
     ######################################
     ## IMPORT DATA FROM CUFFNORM OUTPUT ##
     ######################################
@@ -357,14 +284,15 @@ getSRexample <- function(url="https://github.com/hilldr/SeqRetriever/raw/master/
     dir.count <- paste(dir, "/genes.count_table", sep="")
     # read in the count table from dir.count
     counts <- read.table(dir.count, header=TRUE, sep="\t", stringsAsFactors = FALSE)
+    counts$tracking_id <- NULL
     # Read in data attributes from genes.attr_table file
     dir.attr <- paste(dir,"/genes.attr_table", sep="")
-    attr <- read.table(dir.attr, header=TRUE, sep="\t", stringsAsFactors = FALSE)
+    cn.attr <- read.table(dir.attr, header=TRUE, sep="\t", stringsAsFactors = FALSE)
     # Bind the gene_short_name from the attr.table to data1,
     # gene_short_name is the first column in data1
-    data1 <- cbind(attr, counts)
+    data1 <- cbind(cn.attr, counts)
     return(data1)
-  }
+  }      
 #+END_SRC
 
 #+RESULTS:
@@ -389,7 +317,11 @@ getSRexample <- function(url="https://github.com/hilldr/SeqRetriever/raw/master/
   ## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #+END_SRC
 * Useful operations
-
+**  Install from Github
+#+BEGIN_SRC R :session *R* :eval yes
+library("devtools")
+devtools::install_github("hilldr/SeqRetriever/SeqRetriever")
+#+END_SRC
 ** Process package documentation
 #+BEGIN_SRC R :session *R* :eval yes
 wd <- getwd()
@@ -422,4 +354,10 @@ remove.packages("SeqRetriever")
 
 #+RESULTS:
 
-* TODO Write description of SeqRetriever
+** Example
+
+#+BEGIN_SRC R :session *R*
+library("SeqRetriever") # Loads the SeqRetriever function library
+getSRexample() # Downloads and unpacks example dataset in working directory
+SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE) # Generates output files in the working directory
+#+END_SRC

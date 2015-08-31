@@ -1,9 +1,11 @@
 #    -*- mode: org -*-
-# Time-stamp: <2015-08-31 15:01:08 (david)>
+# Time-stamp: <2015-08-31 16:51:41 (david)>
 #+STARTUP: overview
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
 #+EMAIL: hilldr@med.umich.edu
+* Package design
+** TODO Design SeqRetriever package and aims
 * Source code
  # org-babel-tangle C-c C-v t
 ** Description file
@@ -28,6 +30,7 @@ LazyData: true
 
 ** FUNCTION: SeqRetriever()
 
+*** TODO Separate into SeqBoxplot() and SeqHeatmap()
 *** Contents of ?SeqRetriever
 #+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqRetriever.R
 #' SeqRetriever
@@ -268,11 +271,16 @@ getSRexample <- function(url="https://github.com/hilldr/SeqRetriever/raw/master/
 
 ***  Contents of ?SeqDataframe
 #+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
-  #' SeqDataframe
-  #'
-  #' This function accepts cuffnorm format fpkm counts and returns a formatted R dataframe
+#' SeqDataframe
+#'
+#' This function accepts cuffnorm format fpkm counts and returns a formatted R dataframe
+#' @param dir The directory containing CuffNorm format output files. 
+#' @return Normalized FPKM dataframe of FPKM counts and gene metadata accross all samples. 
+#' @export
+#' @examples
+#' getSRexample() # Downloads and unpacks example dataset in working directory
+#' SeqDataframe(dir="./norm_out")
 #+END_SRC
-#+RESULTS:
 
 *** Import data from CUFFNORM output and return dataframe
 #+BEGIN_SRC R :session *R* :eval yes :exports code :tangle ./SeqRetriever/R/SeqDataframe.R

@@ -2,9 +2,14 @@
 #' SeqDataframe
 #'
 #' This function accepts cuffnorm format fpkm counts and returns a formatted R dataframe
+#' @param dir The directory containing CuffNorm format output files. 
+#' @return Normalized FPKM dataframe of FPKM counts and gene metadata accross all samples. 
+#' @export
+#' @examples
+#' getSRexample() # Downloads and unpacks example dataset in working directory
+#' SeqDataframe(dir="./norm_out")
 
-SeqDataframe <- function(dir = "./")
-{
+SeqDataframe <- function(dir = "./"){
   ######################################
   ## IMPORT DATA FROM CUFFNORM OUTPUT ##
   ######################################
@@ -12,12 +17,13 @@ SeqDataframe <- function(dir = "./")
   dir.count <- paste(dir, "/genes.count_table", sep="")
   # read in the count table from dir.count
   counts <- read.table(dir.count, header=TRUE, sep="\t", stringsAsFactors = FALSE)
+  counts$tracking_id <- NULL
   # Read in data attributes from genes.attr_table file
   dir.attr <- paste(dir,"/genes.attr_table", sep="")
-  attr <- read.table(dir.attr, header=TRUE, sep="\t", stringsAsFactors = FALSE)
+  cn.attr <- read.table(dir.attr, header=TRUE, sep="\t", stringsAsFactors = FALSE)
   # Bind the gene_short_name from the attr.table to data1,
   # gene_short_name is the first column in data1
-  data1 <- cbind(attr, counts)
+  data1 <- cbind(cn.attr, counts)
   return(data1)
 }
 

@@ -1,10 +1,22 @@
 #    -*- mode: org -*-
-# Time-stamp: <2015-08-31 16:51:41 (david)>
+# Time-stamp: <2015-09-01 09:47:14 (david)>
 #+STARTUP: overview
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
 #+EMAIL: hilldr@med.umich.edu
-* Package design
+* Aims
+High throughput RNA sequencing is an incredibly powerful tool for characterizing gene expression events ranging in scale from the complete transcriptome of an organism or tissue  the expression of a single rare RNA isoform accounting for the tiniest fraction of all trancriptional activity in a cell.  
+
+SeqRetriever is designed to extract gene abundance data from the raw output of the [[http://cole-trapnell-lab.github.io/cufflinks/][Tophat/Cufflinks]] transcriptome assembly and abundance estimation suite and convert it into R dataframes, commonly used plots, and universal CSV output files. This allows you to ask simple questions about differences in gene expression and generate output that you can share with your colleagues, advisors, collaborators, and reviewers without requiring a degree in computer science or lengthy immersion in boring programming blogs. We get it - you have papers that needed to be written yesterday and you don't have time to learn to program. We're even okay with you analyzing these output files in Excel if you want (though because this is an R package we're obligated to remind you that [[http://scienceblogs.com/principles/2009/03/18/why-does-excel-suck-so-much/][Excel is pretty lame]]).
+
+There are a variety of tools available for analyzing RNA-seq datasets in the R environment, including the outstanding [[http://compbio.mit.edu/cummeRbund/][CummeRbund]] package designed for analyzing Cufflinks output which we highly recommend. SeqRetriever has far fewer features, focusing exclussively on differential expression analysis of assembled RNA-seq datasets. SeqRetriever aims to be the first R package you run on a brand new dataset, but probably not the last one. This package is designed to get you asking, answering, refining, and re-asking your questions as quickly as possible.
+
+* Design criteria
+All functions in the SeqRetriever package are designed with the following criteria in mind:
+
+1. Approachable - Anyone can generate meaningful, high quality data from RNA-seq datasets.
+2. Productive - Functions should be simple and intuitive. You shouldn't have to pull up ?SeqDataframe in every R session. Good functions should free your mind to think about science, not programming.
+
 ** TODO Design SeqRetriever package and aims
 * Source code
  # org-babel-tangle C-c C-v t
@@ -26,6 +38,64 @@ Depends: R (>= 3.2.1), ggplot2, pheatmap, RColorBrewer, plyr, reshape
 License: GPL (>= 2)
 URL: https://github.com/hilldr/SeqRetriever
 LazyData: true
+#+END_SRC
+
+** FUNCTION: SeqDataframe()
+
+***  Contents of ?SeqDataframe
+#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
+#' SeqDataframe
+#'
+#' This function accepts cuffnorm format fpkm counts and returns a formatted R dataframe
+#' @param dir The directory containing CuffNorm format output files. 
+#' @return Normalized FPKM dataframe of FPKM counts and gene metadata accross all samples. 
+#' @export
+#' @examples
+#' getSRexample() # Downloads and unpacks example dataset in working directory
+#' SeqDataframe(dir="./norm_out")
+#+END_SRC
+
+*** Import data from CUFFNORM output and return dataframe
+#+BEGIN_SRC R :session *R* :eval yes :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
+  SeqDataframe <- function(dir = "./"){
+    ######################################
+    ## IMPORT DATA FROM CUFFNORM OUTPUT ##
+    ######################################
+    # dir.count is a string for the count table location
+    dir.count <- paste(dir, "/genes.count_table", sep="")
+    # read in the count table from dir.count
+    counts <- read.table(dir.count, header=TRUE, sep="\t", stringsAsFactors = FALSE)
+    counts$tracking_id <- NULL
+    # Read in data attributes from genes.attr_table file
+    dir.attr <- paste(dir,"/genes.attr_table", sep="")
+    cn.attr <- read.table(dir.attr, header=TRUE, sep="\t", stringsAsFactors = FALSE)
+    # Bind the gene_short_name from the attr.table to data1,
+    # gene_short_name is the first column in data1
+    data1 <- cbind(cn.attr, counts)
+    return(data1)
+  }      
+#+END_SRC
+
+#+RESULTS:
+
+*** License
+#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
+  ## SeqRetriever
+  ## Copyright (C) 2015  David R. Hill and Shrikar Thodla
+
+  ## This program is free software; you can redistribute it and/or modify
+  ## it under the terms of the GNU General Public License as published by
+  ## the Free Software Foundation; either version 2 of the License, or
+  ## (at your option) any later version.
+
+  ## This program is distributed in the hope that it will be useful,
+  ## but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ## GNU General Public License for more details.
+
+  ## You should have received a copy of the GNU General Public License along
+  ## with this program; if not, write to the Free Software Foundation, Inc.,
+  ## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #+END_SRC
 
 ** FUNCTION: SeqRetriever()
@@ -265,64 +335,6 @@ getSRexample <- function(url="https://github.com/hilldr/SeqRetriever/raw/master/
 ## You should have received a copy of the GNU General Public License along
 ## with this program; if not, write to the Free Software Foundation, Inc.,
 ## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-#+END_SRC
-
-** FUNCTION: SeqDataframe()
-
-***  Contents of ?SeqDataframe
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
-#' SeqDataframe
-#'
-#' This function accepts cuffnorm format fpkm counts and returns a formatted R dataframe
-#' @param dir The directory containing CuffNorm format output files. 
-#' @return Normalized FPKM dataframe of FPKM counts and gene metadata accross all samples. 
-#' @export
-#' @examples
-#' getSRexample() # Downloads and unpacks example dataset in working directory
-#' SeqDataframe(dir="./norm_out")
-#+END_SRC
-
-*** Import data from CUFFNORM output and return dataframe
-#+BEGIN_SRC R :session *R* :eval yes :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
-  SeqDataframe <- function(dir = "./"){
-    ######################################
-    ## IMPORT DATA FROM CUFFNORM OUTPUT ##
-    ######################################
-    # dir.count is a string for the count table location
-    dir.count <- paste(dir, "/genes.count_table", sep="")
-    # read in the count table from dir.count
-    counts <- read.table(dir.count, header=TRUE, sep="\t", stringsAsFactors = FALSE)
-    counts$tracking_id <- NULL
-    # Read in data attributes from genes.attr_table file
-    dir.attr <- paste(dir,"/genes.attr_table", sep="")
-    cn.attr <- read.table(dir.attr, header=TRUE, sep="\t", stringsAsFactors = FALSE)
-    # Bind the gene_short_name from the attr.table to data1,
-    # gene_short_name is the first column in data1
-    data1 <- cbind(cn.attr, counts)
-    return(data1)
-  }      
-#+END_SRC
-
-#+RESULTS:
-
-*** License
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
-  ## SeqRetriever
-  ## Copyright (C) 2015  David R. Hill and Shrikar Thodla
-
-  ## This program is free software; you can redistribute it and/or modify
-  ## it under the terms of the GNU General Public License as published by
-  ## the Free Software Foundation; either version 2 of the License, or
-  ## (at your option) any later version.
-
-  ## This program is distributed in the hope that it will be useful,
-  ## but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ## GNU General Public License for more details.
-
-  ## You should have received a copy of the GNU General Public License along
-  ## with this program; if not, write to the Free Software Foundation, Inc.,
-  ## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #+END_SRC
 * Useful operations
 **  Install from Github

@@ -112,7 +112,7 @@ if (boxplot == TRUE) {
     print("Boxplot output disabled. Set boxplot = TRUE to enable")
 }
 
-#############
+  #############
   ## HEATMAP ##
   #############
   if (heatmap == TRUE) {

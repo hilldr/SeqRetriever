@@ -1,4 +1,3 @@
-
 #' SeqStatSubset
 #'
 #' This function subsets a SeqDataframe according to the results of a two-tailed unpaired Student's t-test and returns a dataframe containing only the genes and FPKM values meeting the statistical significance criteria

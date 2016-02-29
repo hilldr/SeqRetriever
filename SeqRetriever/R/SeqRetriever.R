@@ -1,4 +1,3 @@
-
 #' SeqRetriever
 #'
 #' This function searches cuffnorm format gene expression data for user specified genes and generates a normalized FPKM table and box plots and/or a heatmap with hierarchical clustering.

@@ -47,6 +47,6 @@ SeqStudents <- function(data,
     # calculate Bonferroni correction
     data$Bonf_p <- p.adjust(data$p, method = 'bonferroni', n = length(data$p))
     # sort based on p-value
-    data <- data[order(data$p),]
+#    data <- data[order(data$p),]
     return(data)
 }

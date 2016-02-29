@@ -1,5 +1,5 @@
 #    -*- mode: org -*-
-# Time-stamp: <2015-09-23 18:19:59 (david)>
+# Time-stamp: <2016-02-29 14:34:07>
 #+STARTUP: overview
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
@@ -490,7 +490,7 @@ getSRexample <- function(url="https://github.com/hilldr/SeqRetriever/raw/master/
 * Useful operations
 **  Install from Github
 #+BEGIN_SRC R :session *R* :eval yes
-library("devtools")
+library(devtools)
 devtools::install_github("hilldr/SeqRetriever/SeqRetriever")
 #+END_SRC
 ** Process package documentation
@@ -516,7 +516,7 @@ install("SeqRetriever")
 #+END_SRC
 
 #+RESULTS:
-: TRUE
+: /home/david/development/SeqRetriever/SeqRetriever/R
 
 ** Uninstall SeqRetriever
 #+BEGIN_SRC R :session *R* :eval yes

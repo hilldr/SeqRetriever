@@ -7,6 +7,7 @@
 #' @param csv.out Name and location of the CSV file output. Default "SRoutput.csv"
 #' @param csv Boolean operator controlling csv output. TRUE returns csv file with filename as specified by 'csv.out'. Default FALSE
 #' @param scales Determines how scales are set: "fixed", free ("free"), or free in one dimension ("free_x", "free_y"). Default is "free_y". See ggplot2 facet_wrap() documentation.
+#' @param size Integer. Point size points mapped by geom_point(). Set to 0 for box and whiskers plots only. Default 5
 #' @return ggplot 2 facet_wrap() opject
 #' @export
 #' @examples
@@ -16,42 +17,22 @@
 
 SeqBoxplot <- function(gene.names,
                        nrow = 3,
-                       dir = "./",
+                       dir,
                        csv = FALSE,
                        csv.out ="SRoutput.csv",
-                       scales = "free_y")
+                       scales = "free_y",
+                       size = 5)
 {
-  ######################################
-  ## IMPORT DATA FROM CUFFNORM OUTPUT ##
-  ######################################
-  # dir.count is a string for the count table location
-  dir.count <- paste(dir, "/genes.count_table", sep="")
-  # read in the count table from dir.count
-  data1 <- read.table(dir.count, header=TRUE, sep="\t")
-  # Delete tracking ID colum
-  data1$tracking_id <- NULL
-  # Read in data from genes.attr_table file
-  dir.attr <- paste(dir,"/genes.attr_table", sep="")
-  attr.table <- read.table(dir.attr, header=TRUE, sep="\t")
-  # Bind the gene_short_name from the attr.table to data1,
-  # gene_short_name is the first column in data1
-  data1 <- cbind(attr.table$gene_short_name, data1)
-  # Restore gene_short_name
-  colnames(data1)[1] <- "gene_short_name"
 
 ##############################
 ## SUBSET TO MATCHING GENES ##
 ##############################
 # Search for gene_short_name matching input query (as vector)
 # returns vector of matching rownames
-matches <- which(data1$gene_short_name %in% as.vector(gene.names))
+matches <- which(rownames(dir) %in% as.vector(gene.names))
 # Subset data to rownames matching query
-data.sub <- data1[matches,]
-## Sum counts for gene isoforms
-# load library plyr
-library(plyr)
-data.sub.sum <- ddply(data.sub, "gene_short_name", numcolwise(sum))
-rownames(data.sub.sum) <- data.sub.sum$gene_short_name
+data.sub <- dir[matches,]
+data.sub$gene_short_name <- rownames(data.sub)
 if (csv == TRUE) {
     # Notify user and Export search results as a .csv file
     print(paste("Writing retrieved FPKM table as",csv.out))
@@ -65,7 +46,7 @@ if (csv == TRUE) {
 ###############
 # reformat data.sub.sum for easy boxplot in ggplot2
 library(reshape)
-melt.data <- melt(data.sub.sum, id = "gene_short_name")
+melt.data <- melt(data.sub, id = "gene_short_name")
 # trim # from sample ID to create group label
 melt.data$variable <- gsub('.{2}$', '', melt.data$variable)
 # Add column names to the melted table
@@ -81,21 +62,8 @@ library(ggplot2)
     plot <- ggplot(melt.data,aes(x = group, y = fpkm, fill = factor(group)))+
             geom_boxplot(color = "black") +
             geom_point(aes(x = group, y = fpkm, fill = factor(group)),
-                       color = "black", shape = 21, size = 18/length(gene.names)) +
-            facet_wrap(~ gene, scales = scales,nrow = nrow) +
-            theme(legend.position = "none",
-                  axis.text.x = element_text(size = (42/length(gene.names)*2),
-                                             face = "bold",
-                                             color = "black",
-                                             angle = 45,
-                                             vjust = 1,hjust = 1),
-                  axis.text.y = element_text(size = 18,
-                                             face = "bold"),
-                  axis.title.y = element_text(size = 22,
-                                              face = "bold",
-                                              vjust = 1.5),
-                  strip.text.x = element_text(size = 22,
-                                              face = "bold")) +
+                       color = "black", shape = 21, size = size) +
+            facet_wrap(~ gene, scales = scales, nrow = nrow) +
             xlab("") +
             ylab("Normalized FPKM")
     return(plot)

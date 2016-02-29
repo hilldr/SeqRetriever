@@ -27,6 +27,7 @@ SeqDataframe <- function(dir = "./"){
   data1$gene_short_name <- as.character(data1$gene_short_name)
   # load library plyr
   library(plyr)
+  # Sum counts for gene isoforms  
   data1 <- ddply(data1, "gene_short_name", numcolwise(sum))
   rownames(data1) <- data1$gene_short_name  
   return(data1)

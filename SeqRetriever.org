@@ -1,5 +1,5 @@
 #    -*- mode: org -*-
-# Time-stamp: <2016-03-01 15:24:13>
+# Time-stamp: <2016-03-01 15:40:24>
 #+STARTUP: overview
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
@@ -25,15 +25,17 @@ All functions in the SeqRetriever package are designed with the following criter
 * Examples
 
 ** Setup database
-#+begin_src R :session *R* :exports code :eval no
+#+begin_src R :session *R* :exports code :eval yes
 library(SeqRetriever)
 getSRexample() # Downloads and unpacks example dataset in working directory
 testdf <- SeqDataframe(dir = "./norm_out") # format dataframe
 #+end_src
 ** Select genes
-#+begin_src R :session *R* :exports both :eval yes
+#+begin_src R :session *R* :exports code :eval yes
 genes <- SeqGenes(gene.names = c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"), df = testdf)
 #+end_src
+
+#+RESULTS:
 ** Print boxplot
 #+begin_src R :session *R* :exports both :results graphics :file boxplots.png :width 800 :height 800 :eval yes
 plot <- SeqBoxplot(genes)

@@ -36,7 +36,6 @@ remove.packages("SeqRetriever")
 #+END_SRC
 
 #+RESULTS:
-: TRUE
 
 ** Convert Org-mode to github markdown
 #+begin_src sh

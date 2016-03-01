@@ -14,8 +14,6 @@ SeqBoxplot(df, nrow = 3, scales = "free_y", size = 5)
 \item{scales}{Determines how scales are set: "fixed", free ("free"), or free in one dimension ("free_x", "free_y"). Default is "free_y". See ggplot2 facet_wrap() documentation.}
 
 \item{size}{Integer. Point size points mapped by geom_point(). Set to 0 for box and whiskers plots only. Default 5}
-
-\item{dir}{The directory containing CuffNorm format output files.}
 }
 \value{
 ggplot 2 facet_wrap() opject
@@ -25,7 +23,9 @@ This function searches cuffnorm format gene expression data for user specified g
 }
 \examples{
 getSRexample() # Downloads and unpacks example dataset in working directory
-example <- SeqBoxplot(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out")
-print(example)
+testdf <- SeqDataframe(dir = "./norm_out")
+genes <- SeqGenes(gene.names = c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"), df = testdf)
+plot <- SeqBoxplot(genes)
+print(plot)
 }
 

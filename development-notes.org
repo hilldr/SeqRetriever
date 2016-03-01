@@ -1,0 +1,56 @@
+* Useful operations
+**  Install from Github
+#+BEGIN_SRC R :session *R* :eval yes
+library(devtools)
+devtools::install_github("hilldr/SeqRetriever/SeqRetriever")
+#+END_SRC
+** Process package documentation
+#+BEGIN_SRC R :session *R* :eval yes
+wd <- getwd()
+if (wd != "/home/david/development/SeqRetriever/SeqRetriever"){
+  setwd("/home/david/development/SeqRetriever/SeqRetriever")
+} else {
+  print("Already in the SeqRetriever working directory")
+}
+#file.remove("NAMESPACE")
+library(roxygen2)
+library(devtools)
+document()
+#+END_SRC
+
+#+RESULTS:
+
+** Install latest version from local source
+#+BEGIN_SRC R :session *R* :eval yes
+library(devtools)
+setwd("..")
+install("SeqRetriever")
+#+END_SRC
+
+#+RESULTS:
+: TRUE
+
+** Uninstall SeqRetriever
+#+BEGIN_SRC R :session *R* :eval yes
+remove.packages("SeqRetriever")
+#+END_SRC
+
+#+RESULTS:
+: TRUE
+
+** Example
+
+#+BEGIN_SRC R :session *R*
+library("SeqRetriever") # Loads the SeqRetriever function library
+getSRexample() # Downloads and unpacks example dataset in working directory
+SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE) # Generates output files in the working directory
+#+END_SRC
+
+
+** Testing
+#+BEGIN_SRC R :session *R* :eval no
+source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqStudents.R")
+results <- SeqStudents(SeqDataframe(dir="/home/david/development/SeqRetriever/norm_out"), group1 = "ES", group2 = "HLO")
+subset <- SeqStatSubset(SeqDataframe(dir="/home/david/development/SeqRetriever/norm_out"), limit= 0.001, group1 = "ES", group2 = "HLO")
+#+END_SRC
+

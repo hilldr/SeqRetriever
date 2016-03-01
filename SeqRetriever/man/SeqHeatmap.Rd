@@ -11,7 +11,7 @@ SeqHeatmap(df, hm.name = "SRheatmap.png", w = 8, h = 11, cellwidth = 15,
   cellheight = 15)
 }
 \arguments{
-\item{hm.name}{Name of heatmap output. Default is "gr_heatmap.pdf"}
+\item{hm.name}{Name of heatmap output. Default is "SRheatmap.png"}
 
 \item{cellwidth}{Heatmap cell width in px. Default 30}
 
@@ -35,7 +35,9 @@ This function searches cuffnorm format gene expression data for user specified g
 }
 \examples{
 getSRexample() # Downloads and unpacks example dataset in working directory
-SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE)
+testdf <- SeqDataframe(dir = "./norm_out")
+genes <- SeqGenes(gene.names = c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"), df = testdf)
+SeqHeatmap(genes)
 getSRexample() # Downloads and unpacks example dataset in working directory
 data <- SeqDataframe(dir="./norm_out")
 SeqHeatmap(data)

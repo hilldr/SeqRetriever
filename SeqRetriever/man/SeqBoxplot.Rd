@@ -4,21 +4,18 @@
 \alias{SeqBoxplot}
 \title{SeqBoxplot}
 \usage{
-SeqBoxplot(gene.names, nrow = 3, dir = "./", csv.out = "SRoutput.csv",
-  scales = "free_y")
+SeqBoxplot(df, nrow = 3, scales = "free_y", size = 5)
 }
 \arguments{
-\item{gene.names}{This first argument is a vector of gene names (as string). Genenames MUST be NCBI Genbank format.}
+\item{df}{Name of the SeqGenes format dataframe to plot}
 
 \item{nrow}{The number of rows in boxplot array. Default 3}
 
-\item{dir}{The directory containing CuffNorm format output files.}
-
-\item{csv.out}{Name and location of the CSV file output. Default "SRoutput.csv"}
-
 \item{scales}{Determines how scales are set: "fixed", free ("free"), or free in one dimension ("free_x", "free_y"). Default is "free_y". See ggplot2 facet_wrap() documentation.}
 
-\item{csv}{Boolean operator controlling csv output. TRUE returns csv file with filename as specified by 'csv.out'. Default FALSE}
+\item{size}{Integer. Point size points mapped by geom_point(). Set to 0 for box and whiskers plots only. Default 5}
+
+\item{dir}{The directory containing CuffNorm format output files.}
 }
 \value{
 ggplot 2 facet_wrap() opject

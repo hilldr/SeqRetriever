@@ -1,15 +1,15 @@
 #    -*- mode: org -*-
-# Time-stamp: <2016-02-29 14:34:07>
+# Time-stamp: <2016-03-01 15:09:56>
 #+STARTUP: overview
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
 #+EMAIL: hilldr@med.umich.edu
 * Aims
-High throughput RNA sequencing is an incredibly powerful tool for characterizing gene expression events ranging in scale from the complete transcriptome of an organism or tissue  the expression of a single rare RNA isoform accounting for the tiniest fraction of all trancriptional activity in a cell.  
+High throughput RNA sequencing is an incredibly powerful tool for characterizing gene expression events ranging in scale from the complete transcriptome of an organism or tissue to the expression of a single rare RNA isoform accounting for the tiniest fraction of all trancriptional activity in a cell.  
 
-SeqRetriever is designed to extract gene abundance data from the raw output of the [[http://cole-trapnell-lab.github.io/cufflinks/][Tophat/Cufflinks]] transcriptome assembly and abundance estimation suite and convert it into R dataframes, commonly used plots, and universal CSV output files. This allows you to ask simple questions about differences in gene expression and generate output that you can share with your colleagues, advisors, collaborators, and reviewers without requiring a degree in computer science or lengthy immersion in boring programming blogs. We get it - you have papers that needed to be written yesterday and you don't have time to learn to program. We're even okay with you analyzing these output files in Excel if you want (though because this is an R package we're obligated to remind you that [[http://scienceblogs.com/principles/2009/03/18/why-does-excel-suck-so-much/][Excel is pretty lame]]).
+SeqRetriever is designed to extract gene abundance data from the raw output of the [[http://cole-trapnell-lab.github.io/cufflinks/][Tophat/Cufflinks]] transcriptome assembly and abundance estimation suite and convert it into R dataframes, commonly used plots, and universal CSV output files. This allows you to ask simple questions about differences in gene expression and generate output that you can share with your colleagues, advisors, collaborators, and reviewers without requiring a degree in computer science or lengthy immersion in boring programming blogs. We get it - you have papers that needed to be written yesterday and you don't have time to learn to program. We're even okay with you analyzing these output files in Excel if you want.
 
-There are a variety of tools available for analyzing RNA-seq datasets in the R environment, including the outstanding [[http://compbio.mit.edu/cummeRbund/][CummeRbund]] package designed for analyzing Cufflinks output which we highly recommend. SeqRetriever has far fewer features, focusing exclusively on differential expression analysis of assembled RNA-seq datasets. SeqRetriever aims to be the first R package you run to answer a brand new question, but probably not the last one. This package is designed to get you asking, answering, refining, and re-asking your questions as quickly as possible.
+There are a variety of tools available for analyzing RNA-seq datasets in the R environment, including the outstanding [[http://compbio.mit.edu/cummeRbund/][CummeRbund]] package designed for analyzing Cufflinks output which we highly recommend. SeqRetriever has far fewer features, focusing exclusively on differential expression analysis of assembled RNA-seq datasets. SeqRetriever aims to be the first R package you run to answer a brand new question about gene expression differences, but probably not the last one. This package is designed to get you asking, answering, refining, and re-asking your questions as quickly as possible.
 
 * Design criteria
 All functions in the SeqRetriever package are designed with the following criteria in mind:
@@ -21,523 +21,84 @@ All functions in the SeqRetriever package are designed with the following criter
 * Work flow
 #+CAPTION: Workflow diagramd
 #+begin_src ditaa :file workflow.png :cmdline -E
-
++-------------+   +------------------+   +---------------------------+
++ FASTQ files +-->+ Tophat/Cufflinks +-->+ Cuffnorm output directory +--\
++-------------+   +------------------+   +---------------------------+  |
+/-----------------------------------------------------------------------/
+|
+V
++---------------------------------------+
++ Format R dataframe with SeqDataframe()|
++-----------------+---------------------+
+                  |
+                  V
++-----------------+--------------------------+
+| Retrieve genes of interest with SeqGenes() |
++-----------------+--------------------------+
+                  |
+                  V
++-----------------+-----------------------------+
+| Subset genes bases on statistical significance|
+: with SeqStatSubset()                          :
++-----------------+-----------------------------+
+                  |
+                  |   +----------------------------------+
+                  +-->+ Output Boxplots with SeqBoxplot()|
+                  |   +----------------------------------+
+                  |   +---------------------------------+
+                  +-->+ Output Heatmap with SeqHeatmap()|
+                  |   +---------------------------------+
+                  |   +--------------------------------------------+
+                  +-->+ Output CSV with P values with SeqStudents()|
+                      +--------------------------------------------+
 #+end_src
 
 #+RESULTS:
+[[file:workflow.png]]
 
-* Source code
- # org-babel-tangle C-c C-v t
-** Description file
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/DESCRIPTION
-Package: SeqRetriever
-Title: RETRIEVES LIST OF GENES FROM CUFFNORM OUTPUT
-Version: 0.2
-Date: 2015-08-23
-Authors@R: c(person("David", "Hill", role = c("aut","cre"),
-	   email = "hilldr@med.umich.edu"),
-	   person("Shrikar", "Thodla", role = c("aut","cre"),
-	   email = "sthodla@umich.edu"))
-Author: David Hill [aut, cre],
-	Shrikar Thodla [aut, cre]
-Maintainer: David Hill <hilldr@med.umich.edu>
-Description: What the package does (one paragraph)
-Depends: R (>= 3.2.1), ggplot2, pheatmap, RColorBrewer, plyr, reshape, matrixStats
-License: GPL (>= 2)
-URL: https://github.com/hilldr/SeqRetriever
-LazyData: true
-#+END_SRC
 
-** FUNCTION: SeqDataframe()
 
-***  Contents of ?SeqDataframe
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
-#' SeqDataframe
-#'
-#' This function accepts cuffnorm format fpkm counts and returns a formatted R dataframe
-#' @param dir The directory containing CuffNorm format output files. 
-#' @return Normalized FPKM dataframe of FPKM counts and gene metadata accross all samples. 
-#' @export
-#' @examples
-#' getSRexample() # Downloads and unpacks example dataset in working directory
-#' SeqDataframe(dir="./norm_out")
-#+END_SRC
+* Examples
 
-*** Import data from CUFFNORM output and return dataframe
-#+BEGIN_SRC R :session *R* :eval yes :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
-  SeqDataframe <- function(dir = "./"){
-    ######################################
-    ## IMPORT DATA FROM CUFFNORM OUTPUT ##
-    ######################################
-    # dir.count is a string for the count table location
-    dir.count <- paste(dir, "/genes.count_table", sep="")
-    # read in the count table from dir.count
-    counts <- read.table(dir.count, header=TRUE, sep="\t", stringsAsFactors = FALSE)
-    counts$tracking_id <- NULL
-    # Read in data attributes from genes.attr_table file
-    dir.attr <- paste(dir,"/genes.attr_table", sep="")
-    cn.attr <- read.table(dir.attr, header=TRUE, sep="\t", stringsAsFactors = FALSE)
-    # Bind the gene_short_name from the attr.table to data1,
-    # gene_short_name is the first column in data1
-    data1 <- cbind(cn.attr, counts)
-    return(data1)
-  }      
-#+END_SRC
+** Setup database
+#+begin_src R :session *R* :exports code :eval no
+library(SeqRetriever)
+getSRexample() # Downloads and unpacks example dataset in working directory
+testdf <- SeqDataframe(dir = "./norm_out") # format dataframe
+#+end_src
+** Select genes
+#+begin_src R :session *R* :exports both :eval yes
+genes <- SeqGenes(gene.names = c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"), df = testdf)
+#+end_src
+** Print boxplot
+#+begin_src R :session *R* :exports both :results graphics :file boxplots.png :width 800 :height 800 :eval yes
+plot <- SeqBoxplot(genes)
+print(plot)
+#+end_src
 
 #+RESULTS:
+[[file:boxplots.png]]
+** Print Heatmap
+#+begin_src R :session *R* :exports both :results graphics :file heatmap.png :eval yes
+SeqHeatmap(genes, hm.name = "heatmap.png")
+#+end_src
 
-*** License
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqDataframe.R
-  ## SeqRetriever
-  ## Copyright (C) 2015  David R. Hill and Shrikar Thodla
+#+RESULTS:
+[[file:heatmap.png]]
 
-  ## This program is free software; you can redistribute it and/or modify
-  ## it under the terms of the GNU General Public License as published by
-  ## the Free Software Foundation; either version 2 of the License, or
-  ## (at your option) any later version.
+** Print boxplot showing only genes that differ significantly between "HLO" and "Lung_A"
+#+begin_src R :session *R* :exports both :results graphics :file sig-boxplots.png :width 800 :height 400 :eval yes
+sig.genes <- SeqStatSubset(genes, limit = 0.001, group1 = "HLO", group2 = "Lung_A")
+plot2 <- SeqBoxplot(sig.genes, nrow = 1)
+print(plot2)
+#+end_src
 
-  ## This program is distributed in the hope that it will be useful,
-  ## but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ## GNU General Public License for more details.
+#+RESULTS:
+[[file:sig-boxplots.png]]
 
-  ## You should have received a copy of the GNU General Public License along
-  ## with this program; if not, write to the Free Software Foundation, Inc.,
-  ## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-#+END_SRC
-
-** FUNCTION: SeqStudents()
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqStudents.R
-  #' SeqStudents
-  #'
-  #' This function performs a two-tailed Student's t-test on two groups specified by the user. The preferred input is a dataframe generated using SeqDataframe().
-  #' @param data The dataframe generated by SeqDataframe
-  #' @param group1 A string unique to the columns in 'data' that contain the first data set to be compared
-  #' @param group2 A string unique to the columns in 'data' that contain the second data set to be compared
-  #' @export
-  #' @examples
-  #' results <- SeqStudents(SeqDataframe(dir="./norm_out"), group1 = "ES", group2 = "HLO")
-
-  SeqStudents <- function(data,
-                          group1 = "ES",
-                          group2 = "HLO"){
-      
-      # Define the two sample groups
-      gp1 <- grep(group1,colnames(data))
-      gp2 <- grep(group2,colnames(data))
-      # Calculate mean by sample group
-      library(matrixStats)
-      data[paste("Mean_",group1,sep="")] <- rowMeans(data[,gp1],na.rm=T)
-      data[paste("Mean_",group2,sep="")] <- rowMeans(data[,gp2],na.rm=T)
-      # Calculate log2 expression 
-      data[paste("log2_",group1,"_ovr_",group2,sep="")] <- log2(data[paste("Mean_",group1,sep="")]/data[paste("Mean_",group2,sep="")])
-      ## function to compare by row, returns t distribution
-      ## The function is defined as
-      row.t <- function(mat1,mat2){
-          mat1 <- as.matrix(mat1)
-          mat2 <- as.matrix(mat2)
-          n1 <- dim(mat1)[2]
-          n2 <- dim(mat2)[2] 
-          n <- n1+n2 
-          m1 <- rowMeans(mat1,na.rm=TRUE) 
-          m2 <- rowMeans(mat2,na.rm=TRUE) 
-          v1 <- rowVars(mat1,na.rm=TRUE) 
-          v2 <- rowVars(mat2,na.rm=TRUE) 
-          vpool <- (n1-1)/(n-2)*v1 + (n2-1)/(n-2)*v2 
-          tstat <- sqrt(n1*n2/n)*(m1-m2)/sqrt(vpool) 
-          return(tstat)
-      }
-      # calculate t-distribution for group1 vs. group2
-      data$tstat <- row.t(data[,gp1],data[,gp2])
-      # calculate degrees of freedom
-      degfree <- (length(gp1)+length(gp2))-2
-      # express t-dist as two-sided p-value
-      data$p <- 2*pt(-abs(data$tstat),df=degfree)
-      # calculate Bonferroni correction
-      data$Bonf_p <- p.adjust(data$p, method = 'bonferroni', n = length(data$p))
-      # sort based on p-value
-      data <- data[order(data$p),]
-      return(data)
-  }
-#+END_SRC
-
-** FUNCTION: SeqStatSubset
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqStatSubset.R
-  #' SeqStatSubset
-  #'
-  #' This function subsets a SeqDataframe according to the results of a two-tailed unpaired Student's t-test and returns a dataframe containing only the genes and FPKM values meeting the statistical significance criteria
-  #'
-  #' @param data The dataframe generated by SeqDataframe
-  #' @param group1 A string unique to the columns in 'data' that contain the first data set to be compared
-  #' @param group2 A string unique to the columns in 'data' that contain the second data set to be compared
-  #' @param limit A value representing the threshold of statistical significance, or maximum P-value considered to represent a significant difference. Default is set at 0.05.
-  #' @param Bonferroni A boolean operator to determine the use of Bonferroni correction when subsetting based on P-value. Default is FALSE, meaning that no Bonferroni correction is performed.
-  #' @export
-  #' @examples
-  #' data <- SeqDataframe(dir="./norm_out")
-  #' subset <- SeqStatSubset(data, limit= 0.001, group1 = "ES", group2 = "HLO")
-
-  SeqStatSubset <- function(data,
-                            limit = 0.05,
-                            Bonferroni = FALSE,
-                            group1 = "HLO",
-                            group2 = "ES"){
-      # calculate stats using SeqRetriever::SeqStudents()
-      df <- SeqStudents(data, group1 = group1, group2 = group2)
-      # Dteremint which set of p-values based on user Bonferroni specification
-      if (Bonferroni == FALSE) {
-          df <- subset(df, df$p <= limit)
-      } else {
-          df <- subset(df, df$Bonf_p <= limit)
-      }
-      # Find genes in the significant subset that match input
-      match <- which(data$gene_short_name %in% df$gene_short_name)
-      # Limit input to matches with significant subset
-      data <- data[match,]
-      return(data)
-  }
-#+END_SRC
-
-** FUNCTION: SeqRetriever()
-*** IN-PROGRESS Use SeqDataframe to generate SeqBoxplot and SeqHeatmap
-*** TODO Separate into SeqBoxplot() and SeqHeatmap()
-*** Contents of ?SeqRetriever
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqRetriever.R
-#' SeqRetriever
-#'
-#' This function searches cuffnorm format gene expression data for user specified genes and generates a normalized FPKM table and box plots and/or a heatmap with hierarchical clustering.
-#' @param gene.names This first argument is a vector of gene names (as string). Genenames MUST be NCBI Genbank format.
-#' @param nrow The number of rows in boxplot array. Default 3
-#' @param dir The directory containing CuffNorm format output files. 
-#' @param csv.out Name and location of the CSV file output. Default "gr_output.csv"
-#' @param bp.name Name of boxplot pdf output. Default "gr_output.pdf"
-#' @param w Width in inches of the boxplot output. Default 8
-#' @param h Height in inches of the boxplot output. Default 11
-#' @param boxplot Boolean operator controlling boxplot output. TRUE returns boxplot. FALSE bypasses boxplot generation. Default TRUE
-#' @param heatmap Boolean operator controlling heatmap output. TRUE returns heatmap plot. FALSE bypasses heatmap geneation. Default is TRUE
-#' @param hm.name Name of heatmap output. Default is "gr_heatmap.pdf"
-#' @param cellwidth Heatmap cell width in px. Default 30
-#' @param cellheight Heatmap cell height in px. Default 30
-#' @return Normalized FPKM matrix containing the specified subset of genes accross all samples. Additional options will plot expression of individual genes as box plots and/or a heatmap with hierarchical clustering
-#' @export
-#' @examples
-#' getSRexample() # Downloads and unpacks example dataset in working directory
-#' SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE)
-#+END_SRC
-
-*** Name function and specify default options
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqRetriever.R
-SeqRetriever <- function(gene.names,
-                           nrow = 3,
-                           dir = "./",
-                           csv.out ="SRoutput.csv",
-                           bp.name = "SRoutput.png",
-                           w = 8,
-                           h = 11,
-                           boxplot = TRUE,
-                           heatmap = TRUE,
-                           hm.name = "SRheatmap.png",
-                           cellwidth = 15,
-                           cellheight = 15)
-#+END_SRC
-
-*** Import data from CUFFNORM output
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqRetriever.R
-{
-  ######################################
-  ## IMPORT DATA FROM CUFFNORM OUTPUT ##
-  ######################################
-  # dir.count is a string for the count table location
-  dir.count <- paste(dir, "/genes.count_table", sep="")
-  # read in the count table from dir.count
-  data1 <- read.table(dir.count, header=TRUE, sep="\t")
-  # Delete tracking ID colum
-  data1$tracking_id <- NULL
-  # Read in data from genes.attr_table file
-  dir.attr <- paste(dir,"/genes.attr_table", sep="")
-  attr.table <- read.table(dir.attr, header=TRUE, sep="\t")
-  # Bind the gene_short_name from the attr.table to data1,
-  # gene_short_name is the first column in data1
-  data1 <- cbind(attr.table$gene_short_name, data1)
-  # Restore gene_short_name
-  colnames(data1)[1] <- "gene_short_name"
-#+END_SRC
-
-*** Subset to matching genes
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqRetriever.R
-  ##############################
-  ## SUBSET TO MATCHING GENES ##
-  ##############################
-  # Search for gene_short_name matching input query (as vector)
-  # returns vector of matching rownames
-  matches <- which(data1$gene_short_name %in% as.vector(gene.names))
-  # Subset data to rownames matching query
-  data.sub <- data1[matches,]
-  ## Sum counts for gene isoforms
-  # load library plyr
-  library(plyr)
-  data.sub.sum <- ddply(data.sub, "gene_short_name", numcolwise(sum))
-  rownames(data.sub.sum) <- data.sub.sum$gene_short_name
-  # Notify user and Export search results as a .csv file
-  print(paste("Writing retrieved FPKM table as",csv.out))
-  write.csv(data.sub.sum,file=csv.out, row.names = FALSE)
-#+END_SRC
-
-*** Generate boxplots
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqRetriever.R
-  ###############
-  ## BOX PLOTS ##
-  ###############
-  # reformat data.sub.sum for easy boxplot in ggplot2
-  library(reshape)
-  melt.data <- melt(data.sub.sum, id = "gene_short_name")
-  # trim # from sample ID to create group label
-  melt.data$variable <- gsub('.{2}$', '', melt.data$variable)
-  # Add column names to the melted table
-  colnames(melt.data) <- c("gene", "group", "fpkm")
-  melt.data <- melt.data[order(melt.data$gene),]
-  # Make box plots and export as .png file
-  library(ggplot2)
-  if (boxplot == TRUE) {
-      #Export file is a png file
-      print(paste("Generating boxplot(s) and saving as",bp.name))
-      png(file = bp.name, width = w, height = h, units = "in", res = 144)
-      plot <- ggplot(melt.data,aes(x = group, y = fpkm, fill = factor(group)))+
-              geom_boxplot(color = "black") +
-              geom_point(aes(x = group, y = fpkm, fill = factor(group)),
-                         color = "black", shape = 21, size = 18/length(gene.names)) +
-              facet_wrap(~ gene, scales = "free_y",nrow = nrow) +
-              theme(legend.position = "none",
-                    axis.text.x = element_text(size = (42/length(gene.names)*2),
-                                               face = "bold",
-                                               color = "black",
-                                               angle = 45,
-                                               vjust = 1,hjust = 1),
-                    axis.text.y = element_text(size = 18,
-                                               face = "bold"),
-                    axis.title.y = element_text(size = 22,
-                                                face = "bold",
-                                                vjust = 1.5),
-                    strip.text.x = element_text(size = 22,
-                                                face = "bold")) +
-              xlab("") +
-              ylab("Normalized FPKM")
-      print(plot)
-      dev.off()
-  } else {
-      print("Boxplot output disabled. Set boxplot = TRUE to enable")
-  }
-#+END_SRC
-
-*** Generate heatmap
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqRetriever.R
-  #############
-  ## HEATMAP ##
-  #############
-  if (heatmap == TRUE) {
-      ## Need matrix. Remove non-numeric
-      # Test is numeric
-      num <- sapply(data.sub.sum, is.numeric)
-      # Subset to TRUE columns
-      data.sub.sum.num <- data.sub.sum[,num]
-      # Subset to rows where SD != 0, ingnoring NA values
-      hm.df <- data.sub.sum.num[apply(data.sub.sum.num, 1, sd, na.rm = TRUE) != 0,]
-      ## Begin heatmap plotting
-      # Notify user
-      print(paste("Generating heatmap and saving as", hm.name))  
-      # Open PNG device
-      png(file = hm.name, width=w, height=h, units="in", res=144)
-      library(pheatmap)
-      library(RColorBrewer)
-      pheatmap(hm.df,
-               scale = "row",
-               clustering_method = "average",
-               color=colorRampPalette(rev(brewer.pal(n=7, name="RdYlBu")))(300),
-               main = "",
-               border_color = "black",
-               cellwidth = cellwidth,
-               cellheight = cellheight,
-               show_rownames = TRUE,
-               fontsize = 12,
-               filename = hm.name)
-  } else {
-      print("Heatmap output disabled.")
-      print("Set heatmap = TRUE to generate heatmap")
-    }
-}
-#+END_SRC
-
-*** License
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqRetriever.R
-## SeqRetriever
-## Copyright (C) 2015  David R. Hill and Shrikar Thodla
-
-## This program is free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 2 of the License, or
-## (at your option) any later version.
-
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-
-## You should have received a copy of the GNU General Public License along
-## with this program; if not, write to the Free Software Foundation, Inc.,
-## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-#+END_SRC
-
-** FUNCTION: SeqHeatmap()
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/SeqStatSubset.R
-  #' SeqHeatmap
-  #'
-  #' This function searches cuffnorm format gene expression data for user specified genes and generates a heatmap with hierarchical clustering.
-  #' @param hm.name Name of heatmap output. Default is "gr_heatmap.pdf"
-  #' @param cellwidth Heatmap cell width in px. Default 30
-  #' @param cellheight Heatmap cell height in px. Default 30
-  #' @return Normalized FPKM matrix containing the specified subset of genes accross all samples. Additional options will plot expression of individual genes as box plots and/or a heatmap with hierarchical clustering
-  #' @export
-  #' @examples
-  #' getSRexample() # Downloads and unpacks example dataset in working directory
-  #' data <- SeqDataframe(dir="./norm_out")
-  #' SeqHeatmap(data)
-
-  SeqHeatmap <- function(df,
-                         hm.name = "SRheatmap.png",
-                         w = 8,
-                         h = 11,
-                         cellwidth = 15,
-                         cellheight = 15)
-
-  {
-      ## Need matrix. Remove non-numeric
-      # Test is numeric
-      num <- sapply(df, is.numeric)
-      # Subset to TRUE columns
-      data.sub.sum.num <- df[,num]
-        # Subset to rows where SD != 0, ingnoring NA values
-      hm.df <- data.sub.sum.num[apply(data.sub.sum.num, 1, sd, na.rm = TRUE) != 0,]
-        ## Begin heatmap plotting
-        # Notify user
-      print(paste("Generating heatmap and saving as", hm.name))  
-        # Open PNG device
-      png(file = hm.name, width=w, height=h, units="in", res=144)
-      library(pheatmap)
-      library(RColorBrewer)
-      pheatmap(hm.df,
-               scale = "row",
-               clustering_method = "average",
-               color=colorRampPalette(rev(brewer.pal(n=7, name="RdYlBu")))(300),
-               main = "",
-               border_color = "black",
-               cellwidth = cellwidth,
-               cellheight = cellheight,
-               show_rownames = TRUE,
-               fontsize = 12,
-               filename = hm.name)
-  }
-
-#+END_SRC
-** FUNCTION: getSRexample()
-
-*** Contents of ?getSRexample
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/getSRexample.R
-#' getSRexample
-#'
-#' This function downloads and unpacks an example dataset in the working directory. See ?SeqRetriever for additional examples.
-#' @param url Specifies the URL path of the file to download.
-#' @return Downloads an example dataset in the working directory
-#' @export
-#' @examples
-#' getSRexample()
-#+END_SRC
-
-*** Name function and specify default options
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/getSRexample.R
-getSRexample <- function(url="https://github.com/hilldr/SeqRetriever/raw/master/example_normout.tar.gz")
-#+END_SRC
-
-*** Download and extract example CuffNorm dataset
-
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/getSRexample.R
-{
-  # DOWNLOAD AND EXTRACT EXAMPLE CUFFNORM DATASET
-  download.file(url=url,method="wget",destfile="example_normout.tar.gz")
-  untar("example_normout.tar.gz")
-}
-#+END_SRC
-
-*** License
-#+BEGIN_SRC R :session *R* :eval no :exports code :tangle ./SeqRetriever/R/getSRexample.R
-## SeqRetriever
-## Copyright (C) 2015  David R. Hill and Shrikar Thodla
-
-## This program is free software; you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 2 of the License, or
-## (at your option) any later version.
-
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-
-## You should have received a copy of the GNU General Public License along
-## with this program; if not, write to the Free Software Foundation, Inc.,
-## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-#+END_SRC
-* Useful operations
-**  Install from Github
+*  Install from Github
 #+BEGIN_SRC R :session *R* :eval yes
 library(devtools)
 devtools::install_github("hilldr/SeqRetriever/SeqRetriever")
-#+END_SRC
-** Process package documentation
-#+BEGIN_SRC R :session *R* :eval yes
-wd <- getwd()
-if (wd != "/home/david/development/SeqRetriever/SeqRetriever"){
-  setwd("/home/david/development/SeqRetriever/SeqRetriever")
-} else {
-  print("Already in the SeqRetriever working directory")
-}
-#file.remove("NAMESPACE")
-library(roxygen2)
-library(devtools)
-document()
-#+END_SRC
-
-#+RESULTS:
-
-** Install latest version from local source
-#+BEGIN_SRC R :session *R* :eval yes
-setwd("..")
-install("SeqRetriever")
-#+END_SRC
-
-#+RESULTS:
-: /home/david/development/SeqRetriever/SeqRetriever/R
-
-** Uninstall SeqRetriever
-#+BEGIN_SRC R :session *R* :eval yes
-remove.packages("SeqRetriever")
-#+END_SRC
-
-#+RESULTS:
-
-** Example
-
-#+BEGIN_SRC R :session *R*
-library("SeqRetriever") # Loads the SeqRetriever function library
-getSRexample() # Downloads and unpacks example dataset in working directory
-SeqRetriever(gene.names=c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"),nrow=3,dir="./norm_out", boxplot = TRUE, heatmap = TRUE) # Generates output files in the working directory
-#+END_SRC
-
-
-** Testing
-#+BEGIN_SRC R :session *R* :eval no
-source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqStudents.R")
-results <- SeqStudents(SeqDataframe(dir="/home/david/development/SeqRetriever/norm_out"), group1 = "ES", group2 = "HLO")
-subset <- SeqStatSubset(SeqDataframe(dir="/home/david/development/SeqRetriever/norm_out"), limit= 0.001, group1 = "ES", group2 = "HLO")
 #+END_SRC
 

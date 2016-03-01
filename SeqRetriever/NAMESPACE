@@ -2,6 +2,7 @@
 
 export(SeqBoxplot)
 export(SeqDataframe)
+export(SeqGenes)
 export(SeqHeatmap)
 export(SeqRetriever)
 export(SeqStatSubset)

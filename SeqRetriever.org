@@ -1,5 +1,5 @@
 #    -*- mode: org -*-
-# Time-stamp: <2016-03-01 15:09:56>
+# Time-stamp: <2016-03-01 15:24:13>
 #+STARTUP: overview
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
@@ -19,44 +19,8 @@ All functions in the SeqRetriever package are designed with the following criter
 3. Readable - Good R script is easy to follow and, therefore, easier to share and debug. While discrete functions in SeqRetriever can be sequenced together in a pipeline to perform complex tasks, the induvidual SeqRetriever functions perform simple tasks and can be used independently of other SeqRetriever functions.
 
 * Work flow
-#+CAPTION: Workflow diagramd
-#+begin_src ditaa :file workflow.png :cmdline -E
-+-------------+   +------------------+   +---------------------------+
-+ FASTQ files +-->+ Tophat/Cufflinks +-->+ Cuffnorm output directory +--\
-+-------------+   +------------------+   +---------------------------+  |
-/-----------------------------------------------------------------------/
-|
-V
-+---------------------------------------+
-+ Format R dataframe with SeqDataframe()|
-+-----------------+---------------------+
-                  |
-                  V
-+-----------------+--------------------------+
-| Retrieve genes of interest with SeqGenes() |
-+-----------------+--------------------------+
-                  |
-                  V
-+-----------------+-----------------------------+
-| Subset genes bases on statistical significance|
-: with SeqStatSubset()                          :
-+-----------------+-----------------------------+
-                  |
-                  |   +----------------------------------+
-                  +-->+ Output Boxplots with SeqBoxplot()|
-                  |   +----------------------------------+
-                  |   +---------------------------------+
-                  +-->+ Output Heatmap with SeqHeatmap()|
-                  |   +---------------------------------+
-                  |   +--------------------------------------------+
-                  +-->+ Output CSV with P values with SeqStudents()|
-                      +--------------------------------------------+
-#+end_src
-
-#+RESULTS:
+#+CAPTION: Workflow diagram
 [[file:workflow.png]]
-
-
 
 * Examples
 
@@ -96,9 +60,38 @@ print(plot2)
 #+RESULTS:
 [[file:sig-boxplots.png]]
 
-*  Install from Github
-#+BEGIN_SRC R :session *R* :eval yes
-library(devtools)
+* Installation
+If you have not installed the development tools package you will first need to install "devtools" in R to access the SeqRetriever repository on GitHub
+#+BEGIN_SRC R :session *R* :eval no
+install.packages("devtools")
+#+END_SRC
+Then, install SeqRetriever as follows:
+#+BEGIN_SRC R :session *R* :eval no
+library("devtools")
 devtools::install_github("hilldr/SeqRetriever/SeqRetriever")
 #+END_SRC
 
+** Required packages
+
+SeqRetriever requires installation of several additional R packages.
+    - ggplot2
+    - pheatmap
+    - RColorBrewer
+    - plyr
+    - reshape
+
+You will be prompted to install these pachages during the SeqRetriever installation process. Alternately, you may run the following command in the R console prior to installing SeqReriever:
+
+#+BEGIN_SRC R :session *R* :eval no
+    install.packages(c("ggplot2","pheatmap","RColorBrewer","plyr","reshape"))
+#+END_SRC
+
+*** R installation instructions for Mac OSX and Windows:
+http://cran.r-project.org/mirrors.html will lead you to a list of
+mirrors through which you can download R. Click on a mirror and then
+click on the download link that is appropriate for your operating system
+(Linux, Mac, or Windows). Follow instructions to install R.
+
+* Please report all errors
+Please report all errors to David Hill at hilldr@med.umich.edu with
+"SeqRetriever error" as the subject.

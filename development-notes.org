@@ -4,6 +4,10 @@
 library(devtools)
 devtools::install_github("hilldr/SeqRetriever/SeqRetriever")
 #+END_SRC
+
+#+RESULTS:
+: TRUE
+
 ** Process package documentation
 #+BEGIN_SRC R :session *R* :eval yes
 wd <- getwd()

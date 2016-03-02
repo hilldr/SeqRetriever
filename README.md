@@ -52,7 +52,7 @@ following criteria in mind:
 Work flow
 =========
 
-![Workflow diagram](workflow.png)
+![Workflow diagram](file:workflow.png)
 
 Examples
 ========
@@ -60,7 +60,7 @@ Examples
 Setup database
 --------------
 
-``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="code" rundoc-eval="no"}
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="code" rundoc-eval="yes"}
 library(SeqRetriever)
 getSRexample() # Downloads and unpacks example dataset in working directory
 testdf <- SeqDataframe(dir = "./norm_out") # format dataframe
@@ -69,19 +69,16 @@ testdf <- SeqDataframe(dir = "./norm_out") # format dataframe
 Select genes
 ------------
 
-``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-eval="yes"}
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="code" rundoc-eval="yes"}
 genes <- SeqGenes(gene.names = c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"), df = testdf)
 ```
-
-Print boxplot
--------------
 
 ``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="boxplots.png" rundoc-width="800" rundoc-height="800" rundoc-eval="yes"}
 plot <- SeqBoxplot(genes)
 print(plot)
 ```
 
-![](boxplots.png)
+![](file:boxplots.png)
 
 Print Heatmap
 -------------
@@ -90,7 +87,7 @@ Print Heatmap
 SeqHeatmap(genes, hm.name = "heatmap.png")
 ```
 
-![](heatmap.png)
+![](file:heatmap.png)
 
 Print boxplot showing only genes that differ significantly between "HLO" and "Lung~A~"
 --------------------------------------------------------------------------------------
@@ -101,7 +98,7 @@ plot2 <- SeqBoxplot(sig.genes, nrow = 1)
 print(plot2)
 ```
 
-![](sig-boxplots.png)
+![](file:sig-boxplots.png)
 
 Installation
 ============
@@ -128,15 +125,16 @@ SeqRetriever requires installation of several additional R packages.
 -   ggplot2
 -   pheatmap
 -   RColorBrewer
--   plyr
+-   dplyr
 -   reshape
+-   readr
 
-You will be prompted to install these pachages during the SeqRetriever
+You will be prompted to install these packages during the SeqRetriever
 installation process. Alternately, you may run the following command in
 the R console prior to installing SeqReriever:
 
 ``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-eval="no"}
-    install.packages(c("ggplot2","pheatmap","RColorBrewer","plyr","reshape"))
+    install.packages(c("ggplot2","pheatmap","RColorBrewer","dplyr","reshape","readr"))
 ```
 
 ### R installation instructions for Mac OSX and Windows:

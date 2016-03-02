@@ -1,7 +1,7 @@
 #' SeqGenes
 #'
 #' This function subsets a SeqDataframe based on a user-supplied gene list
-#' @param gene.names This first argument is a vector of gene names (as string). Genenames MUST be NCBI Genbank format.
+#' @param gene.names This first argument is a vector of gene names (as string). Gene names MUST be NCBI Genbank format.
 #' @param df SeqDataframe object to search
 #' @param csv.out Name and location of the CSV file output. Default "SRoutput.csv"
 #' @param csv Boolean operator controlling csv output. TRUE returns csv file with filename as specified by 'csv.out'. Default FALSE

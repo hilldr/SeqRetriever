@@ -1,5 +1,5 @@
 #    -*- mode: org -*-
-# Time-stamp: <2016-03-01 15:40:24>
+# Time-stamp: <2016-03-02 10:20:05>
 #+STARTUP: overview
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
@@ -82,7 +82,7 @@ SeqRetriever requires installation of several additional R packages.
     - plyr
     - reshape
 
-You will be prompted to install these pachages during the SeqRetriever installation process. Alternately, you may run the following command in the R console prior to installing SeqReriever:
+You will be prompted to install these packages during the SeqRetriever installation process. Alternately, you may run the following command in the R console prior to installing SeqReriever:
 
 #+BEGIN_SRC R :session *R* :eval no
     install.packages(c("ggplot2","pheatmap","RColorBrewer","plyr","reshape"))

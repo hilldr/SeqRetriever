@@ -15,7 +15,8 @@ Depends:
     ggplot2,
     pheatmap,
     RColorBrewer,
-    plyr,
+    dplyr,
+    readr,
     reshape,
     matrixStats
 License: GPL (>= 2)

@@ -88,39 +88,27 @@ test <- profvis({
 #+RESULTS:
 
 11200 ms
+Replace plyr with dplyr
+970 ms
+Replace read.table with readr::read_delim
+380 ms
 
-#+begin_src R :session *R* :results text :exports none :eval yes
-library(profvis)
-# test
-SeqDataframe <- function(dir = "./"){
-  # dir.count is a string for the count table location
-  dir.count <- paste(dir, "/genes.count_table", sep="")
-  # read in the count table from dir.count
-  counts <- read.table(dir.count, header=TRUE, sep="\t", stringsAsFactors = FALSE)
-  counts$tracking_id <- NULL
-  # Read in data attributes from genes.attr_table file
-  dir.attr <- paste(dir,"/genes.attr_table", sep="")
-  cn.attr <- read.table(dir.attr, header=TRUE, sep="\t", stringsAsFactors = FALSE)
-  # Bind the gene_short_name from the attr.table to data1,
-  gene_short_name <- as.character(cn.attr[,"gene_short_name"])
-  data1 <- cbind(gene_short_name, counts)
-  data1$gene_short_name <- as.character(data1$gene_short_name)
-  # load library dplyr instead of plyr
-  library(dplyr)
-  # Sum counts for gene isoforms  
-  data1 <- data1 %>% group_by(gene_short_name) %>% summarise_each(funs(sum)) %>% as.data.frame()
-#  data1 <- ddply(data1, "gene_short_name", numcolwise(sum))
-  rownames(data1) <- data1$gene_short_name  
-  return(data1)
-}
-test <- profvis({    
-    out <- SeqDataframe(dir = "/home/david/Data/RNAseq/HIO_RNAseq/HIO_Ecoli_ES/RESULTS/norm_out")
-})
+
+** Validate results
+#+begin_src R :session *R* :exports none :results graphics :file figure.png :width 1000 :height 1000 :eval yes
+source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqDataframe.R")
+source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqBoxplot.R")
+source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqGenes.R")
+source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqStatSubset.R")
+source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqStudents.R")
+source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqHeatmap.R")
+
+plot <- SeqBoxplot(SeqStatSubset(SeqGenes(gene.names = c("DUOX1","DUOX2","DUOXA2","REG3G","SAA1","NOS2","IL22","CCL20","CXCL1"),
+                                          df = SeqDataframe(dir = "/home/david/Data/RNAseq/HIO_RNAseq/HIO_Ecoli_ES/RESULTS/HIO_norm_out")),
+                                 group1 = "Ctl", group2 = "Ecoli"))
+print(plot)
 #+end_src
 
 #+RESULTS:
-
-970 ms
-
-
+[[file:figure.png]]
 

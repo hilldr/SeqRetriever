@@ -16,13 +16,14 @@ SeqDataframe <- function(dir = "./"){
     # dir.count is a string for the count table location
     dir.count <- paste(dir, "/genes.count_table", sep="")
     # read in the count table from dir.count
-    counts <- read.table(dir.count, header=TRUE, sep="\t", stringsAsFactors = FALSE)
+    library(readr)
+    counts <- read_delim(dir.count, delim = "\t")
     counts$tracking_id <- NULL
     # Read in data attributes from genes.attr_table file
     dir.attr <- paste(dir,"/genes.attr_table", sep="")
-    cn.attr <- read.table(dir.attr, header=TRUE, sep="\t", stringsAsFactors = FALSE)
+    cn.attr <- read_delim(dir.attr, delim = "\t")
     # Bind the gene_short_name from the attr.table to data1,
-    gene_short_name <- as.character(cn.attr[,"gene_short_name"])
+    gene_short_name <- cn.attr[,"gene_short_name"]
     data1 <- cbind(gene_short_name, counts)
     data1$gene_short_name <- as.character(data1$gene_short_name)
     # load library plyr

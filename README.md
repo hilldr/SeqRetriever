@@ -52,7 +52,7 @@ following criteria in mind:
 Work flow
 =========
 
-![Workflow diagram](file:workflow.png)
+![Workflow diagram](workflow.png)
 
 Examples
 ========
@@ -78,7 +78,7 @@ plot <- SeqBoxplot(genes)
 print(plot)
 ```
 
-![](file:boxplots.png)
+![](boxplots.png)
 
 Print Heatmap
 -------------
@@ -87,7 +87,7 @@ Print Heatmap
 SeqHeatmap(genes, hm.name = "heatmap.png")
 ```
 
-![](file:heatmap.png)
+![](heatmap.png)
 
 Print boxplot showing only genes that differ significantly between "HLO" and "Lung~A~"
 --------------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ plot2 <- SeqBoxplot(sig.genes, nrow = 1)
 print(plot2)
 ```
 
-![](file:sig-boxplots.png)
+![](sig-boxplots.png)
 
 Installation
 ============

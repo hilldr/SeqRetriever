@@ -48,7 +48,7 @@ pandoc --from=org --to=markdown -o README.md SeqRetriever.org
 
 #+RESULTS:
 
-#+begin_src ditaa :file workflow.png :cmdline -E
+#+begin_src ditaa :file ./img/workflow.png :cmdline -E
 +-------------+   +------------------+   +---------------------------+
 + FASTQ files +-->+ Tophat/Cufflinks +-->+ Cuffnorm output directory +--\
 +-------------+   +------------------+   +---------------------------+  |
@@ -80,6 +80,10 @@ V
                   +-->+ Output CSV with P values with SeqStudents()|
                       +--------------------------------------------+
 #+end_src
+
+#+RESULTS:
+[[file:./img/workflow.png]]
+
 ** Benchmarking SeqDataframe
 #+begin_src R :session *R* :results text :exports none :eval yes
 library(profvis)

@@ -52,7 +52,7 @@ following criteria in mind:
 Work flow
 =========
 
-![Workflow diagram](file:workflow.png)
+![Workflow diagram](workflow.png)
 
 Examples
 ========
@@ -70,24 +70,24 @@ Select genes
 ------------
 
 ``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="code" rundoc-eval="yes"}
-genes <- SeqGenes(gene.names = c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"), df = testdf)
+genes <- SeqGenes(df = testdf,gene.names = c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"))
 ```
 
-``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="boxplots.png" rundoc-width="800" rundoc-height="800" rundoc-eval="yes"}
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="./img/boxplots.png" rundoc-width="800" rundoc-height="800" rundoc-eval="yes"}
 plot <- SeqBoxplot(genes)
 print(plot)
 ```
 
-![](boxplots.png)
+![](./img/boxplots.png)
 
 Print Heatmap
 -------------
 
-``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="heatmap.png" rundoc-width="800" rundoc-height="400" rundoc-eval="yes"}
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="./img/heatmap.png" rundoc-width="800" rundoc-height="400" rundoc-eval="yes"}
 SeqHeatmap(genes)
 ```
 
-![](heatmap.png)
+![](./img/heatmap.png)
 
 ### Print pHeatmap
 
@@ -96,22 +96,115 @@ library "pheatmap". This method will return high quality plots but lacks
 the flexibility of the standard ggplot2 format output returned by
 SeqHeatmap()
 
-``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="pheatmap.png" rundoc-eval="yes"}
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="./img/pheatmap.png" rundoc-eval="yes"}
 SeqpHeatmap(genes, hm.name = "pheatmap.png", w = 7, h = 3)
 ```
 
-![](pheatmap.png)
+![](./img/pheatmap.png)
 
 Print boxplot showing only genes that differ significantly between "HLO" and "Lung~A~"
 --------------------------------------------------------------------------------------
 
-``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="sig-boxplots.png" rundoc-width="800" rundoc-height="400" rundoc-eval="yes"}
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="./img/sig-boxplots.png" rundoc-width="800" rundoc-height="400" rundoc-eval="yes"}
 sig.genes <- SeqStatSubset(genes, limit = 0.001, group1 = "HLO", group2 = "Lung_A")
 plot2 <- SeqBoxplot(sig.genes, nrow = 1)
 print(plot2)
 ```
 
-![](sig-boxplots.png)
+![](./img/sig-boxplots.png)
+
+Using [magrittr](https://github.com/smbache/magrittr) syntax
+------------------------------------------------------------
+
+SeqRetriever is designed with
+[magrittr](https://github.com/smbache/magrittr) syntax in mind. You may
+find that this improved the readability of your work in SeqRetriever.
+For example:
+
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="./img/magrittr-boxplots.png" rundoc-width="800" rundoc-height="400" rundoc-eval="yes"}
+library(magrittr)
+SeqDataframe(dir = "./norm_out") %>% # Create the dataframe
+    SeqGenes(gene.names = c("PAX7", "CDA", "TCEB3",
+                            "EXTL1", "HES3", "DFFB")) %>% # select genes to plot
+    SeqBoxplot(nrow = 2, size = 2) %>% # generate boxplot and pass to print
+    print()
+```
+
+![](./img/magrittr-boxplots.png)
+
+Here is another example using the SeqStatSubset() function to plot only
+highly significant genes as a heatmap
+
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="./img/magrittr-heatmap.png" rundoc-width="800" rundoc-height="800" rundoc-eval="yes"}
+library(magrittr)
+SeqDataframe(dir = "./norm_out") %>%
+    SeqStatSubset(limit = 0.001,
+                  Bonferroni = TRUE,
+                  group1 = "ES", group2 = "HLO") %>%
+    SeqHeatmap() %>%
+    print()
+```
+
+![](./img/magrittr-heatmap.png)
+
+Now lets try modifying the heatmap with ggplot2 as an illustration of
+the flexibility of SeqHeatmap
+
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="./img/magrittr-heatmap2.png" rundoc-width="800" rundoc-height="800" rundoc-eval="yes"}
+df <- SeqDataframe(dir = "./norm_out") 
+df <- SeqStatSubset(df,limit = 0.001,
+                  Bonferroni = TRUE,
+                  group1 = "ES", group2 = "HLO")
+plot <- SeqHeatmap(df)
+
+# make a custom color spectrum 
+library(RColorBrewer)
+# These are the colors used in SeqpHeatmap()
+colors <- colorRampPalette(rev(brewer.pal(n=7, name="RdYlBu")))(300)
+
+plot <- plot + scale_fill_gradient2("Z- score",low=colors[1], high=colors[300], mid=colors[150]) +
+    xlab("") + ylab("") +
+    theme(axis.text = element_text(size = 18, face ="bold"),
+          axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+          legend.title = element_text(size = 18, face ="bold"),
+          legend.text = element_text(size = 12, face ="bold"))
+
+print(plot)
+```
+
+![](./img/magrittr-heatmap2.png)
+
+An alternate approach using magrittr syntax. This will produce a plot
+identical to the one above.
+
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="code"}
+# make a custom color spectrum 
+library(RColorBrewer)
+# These are the colors used in SeqpHeatmap()
+colors <- colorRampPalette(rev(brewer.pal(n=7, name="RdYlBu")))(300)
+
+library(magrittr)
+plot <- SeqDataframe(dir = "./norm_out") %>%
+    SeqStatSubset(limit = 0.001,
+                  Bonferroni = TRUE,
+                  group1 = "ES",
+                  group2 = "HLO") %>%
+    SeqHeatmap()
+# No real advantage to magrittr for adjusting ggplot2 objects. The '+' operator already works great
+plot <- plot + scale_fill_gradient2("Z-score",low=colors[1], high=colors[300], mid=colors[150]) +
+    xlab("") + ylab("") +
+    theme(axis.text = element_text(size = 18, face ="bold"),
+          axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+          legend.title = element_text(size = 18, face ="bold"),
+          legend.text = element_text(size = 12, face ="bold"))
+
+print(plot)
+
+```
+
+See [the ggplot2 theme
+documentation](http://docs.ggplot2.org/0.9.3.1/theme.html%20) for a
+complete list of modifiable theme elements.
 
 Installation
 ============

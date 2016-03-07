@@ -82,22 +82,6 @@ library("devtools")
 devtools::install_github("hilldr/SeqRetriever/SeqRetriever")
 #+END_SRC
 
-** Required packages
-
-SeqRetriever requires installation of several additional R packages.
-    - ggplot2
-    - pheatmap
-    - RColorBrewer
-    - dplyr
-    - reshape
-    - readr
-
-You will be prompted to install these packages during the SeqRetriever installation process. Alternately, you may run the following command in the R console prior to installing SeqReriever:
-
-#+BEGIN_SRC R :session *R* :eval no
-    install.packages(c("ggplot2","pheatmap","RColorBrewer","dplyr","reshape","readr"))
-#+END_SRC
-
 *** R installation instructions for Mac OSX and Windows:
 http://cran.r-project.org/mirrors.html will lead you to a list of
 mirrors through which you can download R. Click on a mirror and then

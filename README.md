@@ -52,7 +52,7 @@ following criteria in mind:
 Work flow
 =========
 
-![Workflow diagram](workflow.png)
+![Workflow diagram](file:workflow.png)
 
 Examples
 ========
@@ -129,25 +129,6 @@ Then, install SeqRetriever as follows:
 ``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-eval="no"}
 library("devtools")
 devtools::install_github("hilldr/SeqRetriever/SeqRetriever")
-```
-
-Required packages
------------------
-
-SeqRetriever requires installation of several additional R packages.
--   ggplot2
--   pheatmap
--   RColorBrewer
--   dplyr
--   reshape
--   readr
-
-You will be prompted to install these packages during the SeqRetriever
-installation process. Alternately, you may run the following command in
-the R console prior to installing SeqReriever:
-
-``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-eval="no"}
-    install.packages(c("ggplot2","pheatmap","RColorBrewer","dplyr","reshape","readr"))
 ```
 
 ### R installation instructions for Mac OSX and Windows:

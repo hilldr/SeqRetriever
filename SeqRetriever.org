@@ -1,5 +1,4 @@
 #    -*- mode: org -*-
-# Time-stamp: <2016-03-07 09:04:08>
 #+STARTUP: overview
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla

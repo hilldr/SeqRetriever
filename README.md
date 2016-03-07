@@ -52,7 +52,7 @@ following criteria in mind:
 Work flow
 =========
 
-![Workflow diagram](workflow.png)
+![Workflow diagram](./img/workflow.png)
 
 Examples
 ========

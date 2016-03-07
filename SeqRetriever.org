@@ -19,7 +19,7 @@ All functions in the SeqRetriever package are designed with the following criter
 
 * Work flow
 #+CAPTION: Workflow diagram
-[[file:workflow.png]]
+[[file:./img/workflow.png]]
 
 * Examples
 

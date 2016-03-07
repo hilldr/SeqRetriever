@@ -1,8 +1,8 @@
 #' SeqGenes
 #'
 #' This function subsets a SeqDataframe based on a user-supplied gene list
-#' @param gene.names This first argument is a vector of gene names (as string). Gene names MUST be NCBI Genbank format.
 #' @param df SeqDataframe object to search
+#' @param gene.names This first argument is a vector of gene names (as string). Gene names MUST be NCBI Genbank format.
 #' @param csv.out Name and location of the CSV file output. Default "SRoutput.csv"
 #' @param csv Boolean operator controlling csv output. TRUE returns csv file with filename as specified by 'csv.out'. Default FALSE
 #' @return dataframe
@@ -12,8 +12,8 @@
 #' testdf <- SeqDataframe(dir = "./norm_out")
 #' genes <- SeqGenes(gene.names = c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"), df = testdf)
 
-SeqGenes <- function(gene.names,
-                     df,
+SeqGenes <- function(df,
+                     gene.names,
                      csv = FALSE,
                      csv.out = "SeqGenesOutput.csv")
 {

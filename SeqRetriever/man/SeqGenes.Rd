@@ -4,12 +4,12 @@
 \alias{SeqGenes}
 \title{SeqGenes}
 \usage{
-SeqGenes(gene.names, df, csv = FALSE, csv.out = "SeqGenesOutput.csv")
+SeqGenes(df, gene.names, csv = FALSE, csv.out = "SeqGenesOutput.csv")
 }
 \arguments{
-\item{gene.names}{This first argument is a vector of gene names (as string). Gene names MUST be NCBI Genbank format.}
-
 \item{df}{SeqDataframe object to search}
+
+\item{gene.names}{This first argument is a vector of gene names (as string). Gene names MUST be NCBI Genbank format.}
 
 \item{csv}{Boolean operator controlling csv output. TRUE returns csv file with filename as specified by 'csv.out'. Default FALSE}
 

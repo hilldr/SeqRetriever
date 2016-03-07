@@ -1,47 +1,60 @@
 #' SeqHeatmap
 #'
-#' This function searches cuffnorm format gene expression data for user specified genes and generates a heatmap with hierarchical clustering.
-#' @param hm.name Name of heatmap output. Default is "SRheatmap.png"
-#' @param cellwidth Heatmap cell width in px. Default 30
-#' @param cellheight Heatmap cell height in px. Default 30
-#' @return Normalized FPKM matrix containing the specified subset of genes accross all samples. Additional options will plot expression of individual genes as box plots and/or a heatmap with hierarchical clustering
+#' This function searches cuffnorm format gene expression data for user specified genes and returns a heatmap with hierarchical clustering as a ggplot2 object
+#' @param df SeqDataframe object to plot.
+#' @param dist.method Method for deterining distance measurements for axis clustering. Accepts methods specified in ?dist. Default = "euclidean"
+#' @param hclust.method Clustering method for ordering genes and samples on axis. Acceppts methods specified in ?hclust. Default = "ward.D"
+#' @return Normalized expression heatmap containing the specified genes accross all samples and clustered according to distance on both axis. Returns ggplot2 object for plotting or further user modification.
 #' @export
 #' @examples
 #' getSRexample() # Downloads and unpacks example dataset in working directory
 #' testdf <- SeqDataframe(dir = "./norm_out")
 #' genes <- SeqGenes(gene.names = c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"), df = testdf)
-#' SeqHeatmap(genes)
+#' heatmap <- SeqHeatmap(genes)
+#' plot(heatmap)
+#'
+#' # Example customization
+#' # Match 'pheatmap' style color scheme
+#' heatmap <- SeqHeatmap(genes)
+#' library(RColorBrewer)
+#' colors <- colorRampPalette(rev(brewer.pal(n=7, name="RdYlBu")))(300)
+#' heatmap <- heatmap + scale_fill_gradient2(low=colors[1], high=colors[300], mid=colors[150])
+#' plot(heatmap)
 
 
 SeqHeatmap <- function(df,
-                       hm.name = "SRheatmap.png",
-                       w = 8,
-                       h = 11,
-                       cellwidth = 15,
-                       cellheight = 15)
-
+                       dist.method = "euclidean",
+                       hclust.method = "ward.D")
 {
-    ## Need matrix. Remove non-numeric
-    # Test is numeric
-    num <- sapply(df, is.numeric)
-    # Subset to TRUE columns
-    data.sub.sum.num <- df[,num]
-      # Subset to rows where SD != 0, ingnoring NA values
-    hm.df <- data.sub.sum.num[apply(data.sub.sum.num, 1, sd, na.rm = TRUE) != 0,]
-      ## Begin heatmap plotting
-      # Open PNG device
-    png(file = hm.name, width=w, height=h, units="in", res=144)
-    library(pheatmap)
-    library(RColorBrewer)
-    pheatmap(hm.df,
-             scale = "row",
-             clustering_method = "average",
-             color = colorRampPalette(rev(brewer.pal(n=7, name="RdYlBu")))(300),
-             main = "",
-             border_color = "black",
-             cellwidth = cellwidth,
-             cellheight = cellheight,
-             show_rownames = TRUE,
-             fontsize = 12)
-    dev.off()
+
+    library(SeqRetriever)
+    testdf <- SeqDataframe(dir = "./norm_out") # format dataframe
+    genes <- SeqGenes(gene.names = c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"), df = testdf)
+    df <- df[apply(df, 1, sd, na.rm = TRUE) != 0,] # remove genes when Std. Dev. = 0
+    rownames(df) <- df$gene_short_name
+    df$gene_short_name <- NULL
+                                        # scale gene expression by gene (Z-score)
+    df <- as.data.frame(t(scale(t(df))))     
+                                        # determine order for axis clustering
+    ord <- hclust(dist(df, method = dist.method), method = hclust.method)$order
+    ord2 <- hclust(dist(t(df), method = dist.method), method = hclust.method)$order
+                                        # reformat dataframe for ggplot2
+    df.plot <- data.frame(sample = rep(colnames(df),
+                                       each = nrow(df)),
+                          gene = rownames(df),
+                          expression = unlist(df))
+                                        # fix order of genes and samples according to clustering
+    df.plot$gene <- factor(df.plot$gene, levels = df.plot$gene[ord])
+    df.plot$sample <- factor(df.plot$sample, levels = unique(df.plot$sample)[ord2])
+                                        # default plot parameters
+    library(ggplot2)
+    library(scales) # needed for "muted" colors
+    plot <- ggplot(df.plot, aes(x = sample, y = gene, fill = expression)) +
+        geom_tile(color = "black", lwd = 0.5) +
+        scale_fill_gradient2("Z-score",low = muted("blue"), high = muted("red")) +
+        coord_fixed(ratio = 1) + # fix aspect ratio
+        theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+              panel.background = element_blank()) # reasonable defaults
+
+    return(plot) # return ggplot2 object for futher modification by user
 }

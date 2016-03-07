@@ -44,12 +44,22 @@ print(plot)
 #+RESULTS:
 [[file:boxplots.png]]
 ** Print Heatmap
-#+begin_src R :session *R* :exports both :results graphics :file heatmap.png :eval yes
-SeqHeatmap(genes, hm.name = "heatmap.png", w = 7, h = 3)
+#+begin_src R :session *R* :exports both :results graphics :file heatmap.png :width 800 :height 400 :eval yes
+SeqHeatmap(genes)
 #+end_src
 
 #+RESULTS:
 [[file:heatmap.png]]
+
+*** Print pHeatmap
+This is an alternate implementation of the heatmap output using the library "pheatmap". This method will return high quality plots but lacks the flexibility of the standard ggplot2 format output returned by SeqHeatmap()
+#+begin_src R :session *R* :exports both :results graphics :file pheatmap.png :eval yes
+SeqpHeatmap(genes, hm.name = "pheatmap.png", w = 7, h = 3)
+#+end_src
+
+#+RESULTS:
+[[file:pheatmap.png]]
+
 
 ** Print boxplot showing only genes that differ significantly between "HLO" and "Lung_A"
 #+begin_src R :session *R* :exports both :results graphics :file sig-boxplots.png :width 800 :height 400 :eval yes

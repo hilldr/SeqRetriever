@@ -4,26 +4,34 @@
 \alias{SeqHeatmap}
 \title{SeqHeatmap}
 \usage{
-SeqHeatmap(df, hm.name = "SRheatmap.png", w = 8, h = 11, cellwidth = 15,
-  cellheight = 15)
+SeqHeatmap(df, dist.method = "euclidean", hclust.method = "ward.D")
 }
 \arguments{
-\item{hm.name}{Name of heatmap output. Default is "SRheatmap.png"}
+\item{df}{SeqDataframe object to plot.}
 
-\item{cellwidth}{Heatmap cell width in px. Default 30}
+\item{dist.method}{Method for deterining distance measurements for axis clustering. Accepts methods specified in ?dist. Default = "euclidean"}
 
-\item{cellheight}{Heatmap cell height in px. Default 30}
+\item{hclust.method}{Clustering method for ordering genes and samples on axis. Acceppts methods specified in ?hclust. Default = "ward.D"}
 }
 \value{
-Normalized FPKM matrix containing the specified subset of genes accross all samples. Additional options will plot expression of individual genes as box plots and/or a heatmap with hierarchical clustering
+Normalized expression heatmap containing the specified genes accross all samples and clustered according to distance on both axis. Returns ggplot2 object for plotting or further user modification.
 }
 \description{
-This function searches cuffnorm format gene expression data for user specified genes and generates a heatmap with hierarchical clustering.
+This function searches cuffnorm format gene expression data for user specified genes and returns a heatmap with hierarchical clustering as a ggplot2 object
 }
 \examples{
 getSRexample() # Downloads and unpacks example dataset in working directory
 testdf <- SeqDataframe(dir = "./norm_out")
 genes <- SeqGenes(gene.names = c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"), df = testdf)
-SeqHeatmap(genes)
+heatmap <- SeqHeatmap(genes)
+plot(heatmap)
+
+# Example customization
+# Match 'pheatmap' style color scheme
+heatmap <- SeqHeatmap(genes)
+library(RColorBrewer)
+colors <- colorRampPalette(rev(brewer.pal(n=7, name="RdYlBu")))(300)
+heatmap <- heatmap + scale_fill_gradient2(low=colors[1], high=colors[300], mid=colors[150])
+plot(heatmap)
 }
 

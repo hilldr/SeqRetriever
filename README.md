@@ -83,11 +83,24 @@ print(plot)
 Print Heatmap
 -------------
 
-``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="heatmap.png" rundoc-eval="yes"}
-SeqHeatmap(genes, hm.name = "heatmap.png", w = 7, h = 3)
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="heatmap.png" rundoc-width="800" rundoc-height="400" rundoc-eval="yes"}
+SeqHeatmap(genes)
 ```
 
 ![](heatmap.png)
+
+### Print pHeatmap
+
+This is an alternate implementation of the heatmap output using the
+library "pheatmap". This method will return high quality plots but lacks
+the flexibility of the standard ggplot2 format output returned by
+SeqHeatmap()
+
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="pheatmap.png" rundoc-eval="yes"}
+SeqpHeatmap(genes, hm.name = "pheatmap.png", w = 7, h = 3)
+```
+
+![](pheatmap.png)
 
 Print boxplot showing only genes that differ significantly between "HLO" and "Lung~A~"
 --------------------------------------------------------------------------------------

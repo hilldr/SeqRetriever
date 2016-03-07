@@ -52,7 +52,7 @@ following criteria in mind:
 Work flow
 =========
 
-![Workflow diagram](file:workflow.png)
+![Workflow diagram](workflow.png)
 
 Examples
 ========
@@ -78,16 +78,16 @@ plot <- SeqBoxplot(genes)
 print(plot)
 ```
 
-![](file:boxplots.png)
+![](boxplots.png)
 
 Print Heatmap
 -------------
 
 ``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="heatmap.png" rundoc-eval="yes"}
-SeqHeatmap(genes, hm.name = "heatmap.png")
+SeqHeatmap(genes, hm.name = "heatmap.png", w = 7, h = 3)
 ```
 
-![](file:heatmap.png)
+![](heatmap.png)
 
 Print boxplot showing only genes that differ significantly between "HLO" and "Lung~A~"
 --------------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ plot2 <- SeqBoxplot(sig.genes, nrow = 1)
 print(plot2)
 ```
 
-![](file:sig-boxplots.png)
+![](sig-boxplots.png)
 
 Installation
 ============

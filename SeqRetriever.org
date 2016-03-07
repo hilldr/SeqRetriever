@@ -1,5 +1,5 @@
 #    -*- mode: org -*-
-# Time-stamp: <2016-03-02 17:02:49>
+# Time-stamp: <2016-03-07 09:04:08>
 #+STARTUP: overview
 #+TITLE: SeqRetriever
 #+AUTHOR: David R. Hill and Shrikar Thodla
@@ -46,7 +46,7 @@ print(plot)
 [[file:boxplots.png]]
 ** Print Heatmap
 #+begin_src R :session *R* :exports both :results graphics :file heatmap.png :eval yes
-SeqHeatmap(genes, hm.name = "heatmap.png")
+SeqHeatmap(genes, hm.name = "heatmap.png", w = 7, h = 3)
 #+end_src
 
 #+RESULTS:

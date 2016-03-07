@@ -29,8 +29,6 @@ SeqHeatmap <- function(df,
       # Subset to rows where SD != 0, ingnoring NA values
     hm.df <- data.sub.sum.num[apply(data.sub.sum.num, 1, sd, na.rm = TRUE) != 0,]
       ## Begin heatmap plotting
-      # Notify user
-    print(paste("Generating heatmap and saving as", hm.name))  
       # Open PNG device
     png(file = hm.name, width=w, height=h, units="in", res=144)
     library(pheatmap)
@@ -38,12 +36,12 @@ SeqHeatmap <- function(df,
     pheatmap(hm.df,
              scale = "row",
              clustering_method = "average",
-             color=colorRampPalette(rev(brewer.pal(n=7, name="RdYlBu")))(300),
+             color = colorRampPalette(rev(brewer.pal(n=7, name="RdYlBu")))(300),
              main = "",
              border_color = "black",
              cellwidth = cellwidth,
              cellheight = cellheight,
              show_rownames = TRUE,
-             fontsize = 12,
-             filename = hm.name)
+             fontsize = 12)
+    dev.off()
 }

@@ -7,7 +7,7 @@
 SeqGenes(gene.names, df, csv = FALSE, csv.out = "SeqGenesOutput.csv")
 }
 \arguments{
-\item{gene.names}{This first argument is a vector of gene names (as string). Genenames MUST be NCBI Genbank format.}
+\item{gene.names}{This first argument is a vector of gene names (as string). Gene names MUST be NCBI Genbank format.}
 
 \item{df}{SeqDataframe object to search}
 

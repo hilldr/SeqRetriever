@@ -203,9 +203,13 @@ get_matrices <- function(df){
         return(list)
     }
     x <- get_groups(df)
-    matrices <- lapply(x, function(x){as.matrix(df[,x])})
+    matrices <- sapply(x, function(x){as.matrix(df[,x])})
     return(matrices)
 }
+# make into matrices
+# matrix(unlist(test[1]), ncol = dim(test[[1]])[2], byrow = FALSE)
+# rowSums(matrix(unlist(test[6]), ncol = dim(test[[6]])[2], byrow = FALSE),na.rm =TRUE)
+# rowSums(matrix(unlist(test[6]), ncol = dim(test[[6]])[2], byrow = FALSE)^2,na.rm =TRUE)
 #+end_src
 
 #+RESULTS:

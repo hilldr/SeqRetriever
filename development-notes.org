@@ -195,11 +195,16 @@ all.equal(results$p, results2$p)
 # return list of vectors, each returning the locations of the unique groups
 # list <- lapply(new, function(new) {grep(new, colnames(test))})
 # colnames(test)[list[[5]]]
-get_groups <- function(df){		
-    names <- unique(gsub("\\_[0-9]*$", "",colnames(df)[grep("gene", colnames(test),invert = TRUE)]))
-    list <- lapply(names, function(names) {grep(names, colnames(df))})
-    list[[length(list)+1]] <- grep("gene", colnames(df),invert = TRUE)
-    return(list)
+get_matrices <- function(df){
+    get_groups <- function(df){		
+        names <- unique(gsub("\\_[0-9]*$", "",colnames(df)[grep("gene", colnames(df),invert = TRUE)]))
+        list <- lapply(names, function(names) {grep(names, colnames(df))})
+        list[[length(list)+1]] <- grep("gene", colnames(df),invert = TRUE)
+        return(list)
+    }
+    x <- get_groups(df)
+    matrices <- lapply(x, function(x){as.matrix(df[,x])})
+    return(matrices)
 }
 #+end_src
 

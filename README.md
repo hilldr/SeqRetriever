@@ -192,7 +192,7 @@ plot <- SeqDataframe(dir = "./norm_out") %>%
     SeqHeatmap()
 # No real advantage to magrittr for adjusting ggplot2 objects. The '+' operator already works great
 plot <- plot + scale_fill_gradient2("Z-score",low=colors[1], high=colors[300], mid=colors[150]) +
-    xlab("") + ylab("") +
+    xlab("") + ylab("") + coord_fixed(ratio = 1) +
     theme(axis.text = element_text(size = 18, face ="bold"),
           axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
           legend.title = element_text(size = 18, face ="bold"),

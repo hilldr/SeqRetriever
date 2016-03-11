@@ -32,7 +32,6 @@ install("SeqRetriever")
 #+END_SRC
 
 #+RESULTS:
-: TRUE
 
 ** Uninstall SeqRetriever
 #+BEGIN_SRC R :session *R* :eval yes
@@ -120,3 +119,156 @@ print(plot)
 #+RESULTS:
 [[file:figure.png]]
 
+** Benchmarking SeqDataframe
+#+begin_src R :session *R* :results silent :exports none :eval yes
+library(profvis)
+library(SeqRetriever)
+SeqStudents2 <- function(data,
+                        group1 = "ES",
+                        group2 = "HLO"){
+    
+    # Define the two sample groups
+    gp1 <- grep(group1,colnames(data))
+    gp2 <- grep(group2,colnames(data))
+    # Calculate mean by sample group
+    library(matrixStats)
+    data[paste("Mean_",group1,sep="")] <- rowMeans(data[,gp1],na.rm=T)
+    data[paste("Mean_",group2,sep="")] <- rowMeans(data[,gp2],na.rm=T)
+    # Calculate log2 expression 
+    data[paste("log2_",group1,"_ovr_",group2,sep="")] <- log2(data[paste("Mean_",group1,sep="")]/data[paste("Mean_",group2,sep="")])
+    ## function to compare by row, returns t distribution
+    ## The function is defined as
+    # http://www.inside-r.org/packages/cran/metaMA/docs/row.ttest.stat
+    row.t <- function(mat1,mat2){
+        mat1 <- as.matrix(mat1)
+        mat2 <- as.matrix(mat2)
+        n1 <- dim(mat1)[2]
+        n2 <- dim(mat2)[2] 
+        n <- n1+n2 
+        m1 <- rowMeans(mat1,na.rm=TRUE) 
+        m2 <- rowMeans(mat2,na.rm=TRUE) 
+        v1 <- rowVars(mat1,na.rm=TRUE) 
+        v2 <- rowVars(mat2,na.rm=TRUE) 
+        vpool <- (n1-1)/(n-2)*v1 + (n2-1)/(n-2)*v2 
+        tstat <- sqrt(n1*n2/n)*(m1-m2)/sqrt(vpool) 
+        return(tstat)
+    }
+    # calculate t-distribution for group1 vs. group2
+    data$tstat <- row.t(data[,gp1],data[,gp2])
+    # calculate degrees of freedom
+    degfree <- (length(gp1)+length(gp2))-2
+    # express t-dist as two-sided p-value
+    data$p <- 2*pt(-abs(data$tstat),df=degfree)
+    # calculate Bonferroni correction
+    data$Bonf_p <- p.adjust(data$p, method = 'bonferroni', n = length(data$p))
+    # sort based on p-value
+#    data <- data[order(data$p),]
+    return(data)
+}
+slo <- SeqDataframe(dir = "./norm_out")
+test <- profvis({
+    results <- SeqStudents(slo, group1 = "Ctl", group2 = "Ecoli")
+})
+test2 <- profvis({
+    results2 <- SeqStudents2(slo, group1 = "Ctl", group2 = "Ecoli")
+})
+all.equal(results$p, results2$p)
+# this works
+# p <- apply(x,1, function(x) {t.test(as.numeric(x[2:4]),as.numeric(x[5:7]))$p.value})
+#cluster <- makePSOCKcluster(detectCores())
+#p <- parApply(cl = cluster,x,1, function(x) {t.test(as.numeric(x[2:4]),as.numeric(x[5:7]))$p.value})
+# apply 6920 ms
+# parApply 340 ms
+# SeqStudents 10 ms
+#+end_src
+
+#+begin_src R :session *R* :exports code :eval yes
+# Remove replicate numbers from samples = group names
+# group <- gsub('.{2}$', '', colnames(num.data))
+# Remove number and underscore from end on string
+# new <- gsub("\\_[0-9]*$", "", colnames(test))
+# return vector of all entries except "gene"
+# grep("gene", colnames(test),invert = TRUE)
+# new <- gsub("\\_[0-9]*$", "",colnames(test)[grep("gene", colnames(test),invert = TRUE)])
+# retrive list of sample groups
+# new <- unique(gsub("\\_[0-9]*$", "",colnames(test)[grep("gene", colnames(test),invert = TRUE)]))
+# return list of vectors, each returning the locations of the unique groups
+# list <- lapply(new, function(new) {grep(new, colnames(test))})
+# colnames(test)[list[[5]]]
+get_groups <- function(df){
+    names <- unique(gsub("\\_[0-9]*$", "",colnames(df)[grep("gene", colnames(test),invert = TRUE)]))
+    list <- lapply(names, function(names) {grep(names, colnames(df))})
+    list[[length(list)+1]] <- grep("gene", colnames(df),invert = TRUE)
+    return(list)
+}
+#+end_src
+
+#+RESULTS:
+
+#+begin_src R :session *R* :exports code :eval no
+
+## Load libraries
+library(matrixStats)
+
+# create three lists that will specify the treatment groups
+cn <- colnames(data1)
+gp1 <- grep("Chir_1d", cn, ignore.case = F)
+gp2 <- grep("Chir_3d", cn, ignore.case = F)
+gp3 <- grep("d5_HIO", cn, ignore.case = F)
+gp4 <- grep("FGF_Chir_d5", cn, ignore.case = F)
+gp5 <- grep("DefEnd", cn, ignore.case = F)
+gp6 <- grep("hES", cn, ignore.case = F)
+all <- c(2:18)
+
+## ANOVA
+# reference for anova 
+# http://web.mst.edu/~psyworld/anovaexample.htm
+# F- distribution
+# http://stat.ethz.ch/R-manual/R-devel/library/stats/html/Fdist.html
+## function to compare within row, returns f distribution
+## The function is currently defined as
+row.anova <- function(mat_all,mat1,mat2,mat3,mat4,mat5,mat6){
+  mat1 <- as.matrix(mat1)
+  mat2 <- as.matrix(mat2)
+  mat3 <- as.matrix(mat3)
+  mat4 <- as.matrix(mat4)
+  mat5 <- as.matrix(mat5)
+  mat6 <- as.matrix(mat6) 
+  mat_all <- as.matrix(mat_all)
+  
+  s1<-rowSums(mat1,na.rm=TRUE) #
+  s2<-rowSums(mat2,na.rm=TRUE) #
+  s3<-rowSums(mat3,na.rm=TRUE) #
+  s4<-rowSums(mat4,na.rm=TRUE) #
+  s5<-rowSums(mat5,na.rm=TRUE) #
+  s6<-rowSums(mat6,na.rm=TRUE) #
+  
+  s1s<-rowSums((mat1^2),na.rm=TRUE) #
+  s2s<-rowSums((mat2^2),na.rm=TRUE) #
+  s3s<-rowSums((mat3^2),na.rm=TRUE) #
+  s4s<-rowSums((mat4^2),na.rm=TRUE) #
+  s5s<-rowSums((mat5^2),na.rm=TRUE) #
+  s6s<-rowSums((mat6^2),na.rm=TRUE) #
+  
+  sst <- (s1s+s2s+s3s+s4s+s5s+s6s)-(((s1+s2+s3+s4+s5+s6)^2)/ncol(mat_all)) #
+  ssa <- (((s1^2)/ncol(mat1))+((s2^2)/ncol(mat2))+((s3^2)/ncol(mat3))+((s4^2)/ncol(mat4))+((s5^2)/ncol(mat5))+((s6^2)/ncol(mat6)))-((s1+s2+s3+s4+s5+s6)^2/ncol(mat_all)) #
+  ssw <- sst - ssa #
+  f.stat <- (ssa/5)/(ssw/(ncol(mat_all)-6))
+  return(f.stat)
+}
+# calculate f-statistic
+data1$fstat <- row.anova(data1[,all],data1[,gp1],data1[,gp2],data1[,gp3],data1[,gp4],data1[,gp5],data1[,gp6])
+# express f-statistic as p-value
+data1$p <- pf(data1$fstat, 5, 17, lower.tail=F)
+# calculate Bonferroni correction
+data1$Bonf_p <- p.adjust(data1$p, method = 'bonferroni', n = length(data1$p))
+# Group means
+data1$DE_FGF4_Chir_1d_mean <- rowMeans(data1[,gp1], na.rm=T)
+data1$DE_FGF4_Chir_3d_mean <- rowMeans(data1[,gp2], na.rm=T)
+data1$Hg_sphere_d5_HIO_mean <- rowMeans(data1[,gp3], na.rm=T)
+data1$Hg_sphere_FGF_Chir_d5_mean <- rowMeans(data1[,gp4], na.rm=T)
+data1$DefEnd_mean <- rowMeans(data1[,gp5], na.rm=T)
+data1$hES_mean <- rowMeans(data1[,gp6], na.rm=T)
+data1 <- data1[order(data1$p),]
+write.csv(data1,file="./DATA/normalized_counts_ANOVA.csv")
+#+END_SRC

@@ -195,6 +195,7 @@ all.equal(results$p, results2$p)
 # return list of vectors, each returning the locations of the unique groups
 # list <- lapply(new, function(new) {grep(new, colnames(test))})
 # colnames(test)[list[[5]]]
+library(matrixStats)
 get_matrices <- function(df){
     get_groups <- function(df){		
         names <- unique(gsub("\\_[0-9]*$", "",colnames(df)[grep("gene", colnames(df),invert = TRUE)]))
@@ -203,9 +204,24 @@ get_matrices <- function(df){
         return(list)
     }
     x <- get_groups(df)
-    matrices <- sapply(x, function(x){as.matrix(df[,x])})
+   # matrices <- sapply(x, function(x){df[,x]})
+    matrices <- sapply(x, function(x){matrix(unlist(df[,x]), ncol = length(colnames(df[,x])),byrow = FALSE)})
     return(matrices)
 }
+
+get_matrices2 <- function(df){
+    get_groups <- function(df){		
+        names <- unique(gsub("\\_[0-9]*$", "",colnames(df)[grep("gene", colnames(df),invert = TRUE)]))
+        list <- lapply(names, function(names) {grep(names, colnames(df))})
+        list[[length(list)+1]] <- grep("gene", colnames(df),invert = TRUE)
+        return(list)
+    }
+    x <- get_groups(df)
+    matrices <- sapply(x, function(x){df[,x]})
+   # matrices <- sapply(x, function(x){matrix(unlist(df[,x]), ncol = length(colnames(df[,x])),byrow = FALSE)})
+    return(matrices)
+}
+x <- lapply(test, function(test){rowSums((test^2), na.rm = TRUE)})
 # make into matrices
 # matrix(unlist(test[1]), ncol = dim(test[[1]])[2], byrow = FALSE)
 # rowSums(matrix(unlist(test[6]), ncol = dim(test[[6]])[2], byrow = FALSE),na.rm =TRUE)

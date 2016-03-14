@@ -26,7 +26,6 @@ SeqHeatmap <- function(df,
                        dist.method = "euclidean",
                        hclust.method = "ward.D")
 {
-
     df <- df[apply(df, 1, sd, na.rm = TRUE) != 0,] # remove genes when Std. Dev. = 0
     rownames(df) <- df$gene_short_name
     df$gene_short_name <- NULL
@@ -49,8 +48,8 @@ SeqHeatmap <- function(df,
     plot <- ggplot(df.plot, aes(x = sample, y = gene, fill = expression)) +
         geom_tile() +
         scale_fill_gradient2("Z-score",low = muted("blue"), high = muted("red")) +
-       # coord_fixed(ratio = 1) + # fixed aspect ratio
-       # geom_tile(color = "black", lwd = 0.1) + # modify  grid colow and width
+       # coord_fixed(ratio = 1) + # fix aspect ratio
+       # geom_tile(color = "black", lwd = 0.5) + # set color and size of grid
         theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
               panel.background = element_blank()) # reasonable defaults
 

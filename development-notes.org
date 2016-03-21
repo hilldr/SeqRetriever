@@ -269,7 +269,7 @@ get_sst <- function(sst.1,sst.2, df){
     return(sst)
 }
 sst <- get_sst(sst.1,sst.2, mst)
-ssa <- sum((sst.1^2)/unlist(lapply(test2, function(x) length(x)))) -  (rowSums(sst.1)^2)/length(unique(colnames(mst)[grep("gene", colnames(mst),invert = TRUE)]))
+ssa <- rowSums((sst.1^2)/unlist(lapply(test2, function(x) length(x)))) -  (rowSums(sst.1)^2)/length(unique(colnames(mst)[grep("gene", colnames(mst),invert = TRUE)]))
 ssw <- sst - ssa
 # https://people.richland.edu/james/lecture/m170/ch13-1wy.html
 fstat <- (ssa/(length(test2)-1))/(ssw/(length(unique(colnames(mst)[grep("gene", colnames(mst),invert = TRUE)]))-length(test2)))
@@ -281,7 +281,8 @@ anova.p.adj <- p.adjust(anova.p, method = 'BH', n = length(anova.p))
 #+end_src
 
 #+RESULTS:
-: 0.0454397003660577
+| 0.0908794007321155 |
+|   0.16910967649506 |
 
 #+begin_src R :session *R* :exports code :eval no
 

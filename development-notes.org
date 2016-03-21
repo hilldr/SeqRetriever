@@ -245,7 +245,38 @@ get_anova <- function(df){
 # rowSums(matrix(unlist(test[6]), ncol = dim(test[[6]])[2], byrow = FALSE)^2,na.rm =TRUE)
 #+end_src
 
+#+begin_src R :session *R* :exports code :eval yes
+mst <- read.csv("mst.csv", header = TRUE, stringsAsFactors = FALSE)
+get_matrices <- function(df){
+    get_groups <- function(df){		
+        names <- unique(gsub("\\_[0-9]*$", "",colnames(df)[grep("gene", colnames(df),invert = TRUE)]))
+        list <- lapply(names, function(names) {grep(names, colnames(df))})
+        list[[length(list)+1]] <- grep("gene", colnames(df),invert = TRUE)
+        return(list)
+    }
+    x <- get_groups(df)
+    matrices <- sapply(x, function(x){df[,x]})
+    return(matrices)
+}
+test <- get_matrices(mst)
+test2 <- test[-length(test)]
+sst.1 <- lapply(test2, function(test2){rowSums((test2), na.rm = TRUE)})
+sst.2 <- lapply(test2, function(test2){rowSums((test2^2), na.rm = TRUE)})
+sst.1 <- data.frame(matrix(unlist(sst.1), nrow=unique(sapply(sst.1, length)), byrow=FALSE))
+sst.2 <- data.frame(matrix(unlist(sst.2), nrow=unique(sapply(sst.2, length)), byrow=FALSE))
+get_sst <- function(sst.1,sst.2, df){
+    sst <- rowSums(sst.2) - (rowSums(sst.1)^2)/length(unique(colnames(df)[grep("gene", colnames(df),invert = TRUE)]))
+    return(sst)
+}
+sst <- get_sst(sst.1,sst.2, mst)
+ssa <- sum((sst.1^2)/unlist(lapply(test2, function(x) length(x)))) -  (rowSums(sst.1)^2)/length(unique(colnames(mst)[grep("gene", colnames(mst),invert = TRUE)]))
+ssw <- sst - ssa
+# correct to this point
+# http://web.mst.edu/~psyworld/anovaexample.htm
+#+end_src
+
 #+RESULTS:
+: 87.875
 
 #+begin_src R :session *R* :exports code :eval no
 

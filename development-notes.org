@@ -277,12 +277,12 @@ fstat <- (ssa/(length(test2)-1))/(ssw/(length(unique(colnames(mst)[grep("gene", 
 # http://web.mst.edu/~psyworld/anovaexample.htm
 # express f-statistic as p-value
 anova.p <- pf(fstat, length(test2)-1, (length(unique(colnames(mst)[grep("gene", colnames(mst),invert = TRUE)]))-length(test2)), lower.tail = FALSE)
-anova.p.adj <- p.adjust(anova.p, method = 'BH', n = length(anova.p))
+anova.p.adj <- p.adjust(anova.p, method = 'bonferroni', n = length(anova.p))
 #+end_src
 
 #+RESULTS:
 | 0.0908794007321155 |
-|   0.16910967649506 |
+|  0.338219352990119 |
 
 #+begin_src R :session *R* :exports code :eval no
 
@@ -351,3 +351,15 @@ data1$hES_mean <- rowMeans(data1[,gp6], na.rm=T)
 data1 <- data1[order(data1$p),]
 write.csv(data1,file="./DATA/normalized_counts_ANOVA.csv")
 #+END_SRC
+
+#+begin_src R :session *R* :exports none :eval yes
+library(profvis)
+d <- SeqDataframe("./norm_out/")
+n <- profvis({
+    x <- SeqANOVA(d)
+})
+#+end_src
+
+#+RESULTS:
+
+

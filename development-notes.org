@@ -32,6 +32,7 @@ install("SeqRetriever")
 #+END_SRC
 
 #+RESULTS:
+: TRUE
 
 ** Uninstall SeqRetriever
 #+BEGIN_SRC R :session *R* :eval yes
@@ -354,10 +355,13 @@ write.csv(data1,file="./DATA/normalized_counts_ANOVA.csv")
 
 #+begin_src R :session *R* :exports none :eval yes
 library(profvis)
-d <- SeqDataframe("./norm_out/")
+library(SeqRetriever)
+source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqANOVA.R")
+d <- SeqDataframe("/home/david/Data/RNAseq/HIO_RNAseq/HIO_Ecoli_ES/RESULTS/norm_out")
 n <- profvis({
     x <- SeqANOVA(d)
 })
+## 30 ms
 #+end_src
 
 #+RESULTS:

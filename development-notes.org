@@ -184,69 +184,6 @@ all.equal(results$p, results2$p)
 #+end_src
 
 #+begin_src R :session *R* :exports code :eval yes
-# Remove replicate numbers from samples = group names
-# group <- gsub('.{2}$', '', colnames(num.data))
-# Remove number and underscore from end on string
-# new <- gsub("\\_[0-9]*$", "", colnames(test))
-# return vector of all entries except "gene"
-# grep("gene", colnames(test),invert = TRUE)
-# new <- gsub("\\_[0-9]*$", "",colnames(test)[grep("gene", colnames(test),invert = TRUE)])
-# retrive list of sample groups
-# new <- unique(gsub("\\_[0-9]*$", "",colnames(test)[grep("gene", colnames(test),invert = TRUE)]))
-# return list of vectors, each returning the locations of the unique groups
-# list <- lapply(new, function(new) {grep(new, colnames(test))})
-# colnames(test)[list[[5]]]
-library(matrixStats)
-get_anova <- function(df){
-    get_fstat <- function(df){
-        get_ssw <- function(df){
-            get_matrices <- function(df){
-                get_groups <- function(df){		
-                    names <- unique(gsub("\\_[0-9]*$", "",colnames(df)[grep("gene", colnames(df),invert = TRUE)]))
-                    list <- lapply(names, function(names) {grep(names, colnames(df))})
-                    list[[length(list)+1]] <- grep("gene", colnames(df),invert = TRUE)
-                    return(list)
-                }
-                x <- get_groups(df)
-                matrices <- sapply(x, function(x){df[,x]})
-                return(matrices)
-            }
-            x <- get_matrices(df)
-            sst.1 <- lapply(x, function(x){rowSums((x), na.rm = TRUE)})
-            sst.2 <- lapply(x, function(x){rowSums((x^2), na.rm = TRUE)})
-            sst.1 <- data.frame(matrix(unlist(sst.1), nrow=unique(sapply(sst.1, length)), byrow=FALSE))
-            sst.2 <- data.frame(matrix(unlist(sst.2), nrow=unique(sapply(sst.2, length)), byrow=FALSE))
-            get_sst <- function(sst.1,sst.2, df){
-                sst <- rowSums(sst.2) - (rowSums(sst.1)^2)/length(unique(colnames(df)[grep("gene", colnames(df),invert = TRUE)]))
-                return(sst)
-            }
-            sst <- get_sst(sst.1,sst.2,df)
-            get_ssa <- function(x,sst.1,df){
-                y <- as.data.frame(lapply(x, FUN = function(x){(rowSums(x, na.rm = TRUE)^2)/ncol(x)}))
-                ssa <- rowSums(y) -  (rowSums(sst.1)^2)/length(unique(colnames(df)[grep("gene", colnames(df),invert = TRUE)]))
-                return(ssa)
-            }
-            ssa <- get_ssa(x,sst.1,df)
-            ssw <- sst - ssa
-            stats <- cbind(ssw, ssa)
-            colnames(stats) <- c ("ssw","ssa")
-            return(as.data.frame(stats))
-        }
-        x <- get_ssw(df)
-        f.stat <- (x$ssa/(length(unique(gsub("\\_[0-9]*$", "",colnames(df)[grep("gene", colnames(df),invert = TRUE)])))-1)/(x$ssw/((length(unique(colnames(df)[grep("gene", colnames(df),invert = TRUE)])))-(length(unique(gsub("\\_[0-9]*$", "",colnames(df)[grep("gene", colnames(df),invert = TRUE)])))))))
-        return(f.stat)
-    }
-    p <- pf(get_fstat(df), length(unique(gsub("\\_[0-9]*$", "",colnames(df)[grep("gene", colnames(df),invert = TRUE)]))), length(unique(colnames(df)[grep("gene", colnames(df),invert = TRUE)])), lower.tail=TRUE)
-    return(p)
-}
-
-                                        # make into matrices
-# matrix(unlist(test[1]), ncol = dim(test[[1]])[2], byrow = FALSE)
-# rowSums(matrix(unlist(test[6]), ncol = dim(test[[6]])[2], byrow = FALSE),na.rm =TRUE)
-# rowSums(matrix(unlist(test[6]), ncol = dim(test[[6]])[2], byrow = FALSE)^2,na.rm =TRUE)
-#+end_src
-
-#+begin_src R :session *R* :exports code :eval yes
 mst <- read.csv("mst.csv", header = TRUE, stringsAsFactors = FALSE)
 get_matrices <- function(df){
     get_groups <- function(df){		
@@ -285,85 +222,22 @@ anova.p.adj <- p.adjust(anova.p, method = 'bonferroni', n = length(anova.p))
 | 0.0908794007321155 |
 |  0.338219352990119 |
 
-#+begin_src R :session *R* :exports code :eval no
-
-## Load libraries
-library(matrixStats)
-
-# create three lists that will specify the treatment groups
-cn <- colnames(data1)
-gp1 <- grep("Chir_1d", cn, ignore.case = F)
-gp2 <- grep("Chir_3d", cn, ignore.case = F)
-gp3 <- grep("d5_HIO", cn, ignore.case = F)
-gp4 <- grep("FGF_Chir_d5", cn, ignore.case = F)
-gp5 <- grep("DefEnd", cn, ignore.case = F)
-gp6 <- grep("hES", cn, ignore.case = F)
-all <- c(2:18)
-
-## ANOVA
-# reference for anova 
-# http://web.mst.edu/~psyworld/anovaexample.htm
-# F- distribution
-# http://stat.ethz.ch/R-manual/R-devel/library/stats/html/Fdist.html
-## function to compare within row, returns f distribution
-## The function is currently defined as
-row.anova <- function(mat_all,mat1,mat2,mat3,mat4,mat5,mat6){
-  mat1 <- as.matrix(mat1)
-  mat2 <- as.matrix(mat2)
-  mat3 <- as.matrix(mat3)
-  mat4 <- as.matrix(mat4)
-  mat5 <- as.matrix(mat5)
-  mat6 <- as.matrix(mat6) 
-  mat_all <- as.matrix(mat_all)
-  
-  s1<-rowSums(mat1,na.rm=TRUE) #
-  s2<-rowSums(mat2,na.rm=TRUE) #
-  s3<-rowSums(mat3,na.rm=TRUE) #
-  s4<-rowSums(mat4,na.rm=TRUE) #
-  s5<-rowSums(mat5,na.rm=TRUE) #
-  s6<-rowSums(mat6,na.rm=TRUE) #
-  
-  s1s<-rowSums((mat1^2),na.rm=TRUE) #
-  s2s<-rowSums((mat2^2),na.rm=TRUE) #
-  s3s<-rowSums((mat3^2),na.rm=TRUE) #
-  s4s<-rowSums((mat4^2),na.rm=TRUE) #
-  s5s<-rowSums((mat5^2),na.rm=TRUE) #
-  s6s<-rowSums((mat6^2),na.rm=TRUE) #
-  
-  sst <- (s1s+s2s+s3s+s4s+s5s+s6s)-(((s1+s2+s3+s4+s5+s6)^2)/ncol(mat_all)) #
-  ssa <- (((s1^2)/ncol(mat1))+((s2^2)/ncol(mat2))+((s3^2)/ncol(mat3))+((s4^2)/ncol(mat4))+((s5^2)/ncol(mat5))+((s6^2)/ncol(mat6)))-((s1+s2+s3+s4+s5+s6)^2/ncol(mat_all)) #
-  ssw <- sst - ssa #
-  f.stat <- (ssa/5)/(ssw/(ncol(mat_all)-6))
-  return(f.stat)
-}
-# calculate f-statistic
-data1$fstat <- row.anova(data1[,all],data1[,gp1],data1[,gp2],data1[,gp3],data1[,gp4],data1[,gp5],data1[,gp6])
-# express f-statistic as p-value
-data1$p <- pf(data1$fstat, 5, 17, lower.tail=F)
-# calculate Bonferroni correction
-data1$Bonf_p <- p.adjust(data1$p, method = 'bonferroni', n = length(data1$p))
-# Group means
-data1$DE_FGF4_Chir_1d_mean <- rowMeans(data1[,gp1], na.rm=T)
-data1$DE_FGF4_Chir_3d_mean <- rowMeans(data1[,gp2], na.rm=T)
-data1$Hg_sphere_d5_HIO_mean <- rowMeans(data1[,gp3], na.rm=T)
-data1$Hg_sphere_FGF_Chir_d5_mean <- rowMeans(data1[,gp4], na.rm=T)
-data1$DefEnd_mean <- rowMeans(data1[,gp5], na.rm=T)
-data1$hES_mean <- rowMeans(data1[,gp6], na.rm=T)
-data1 <- data1[order(data1$p),]
-write.csv(data1,file="./DATA/normalized_counts_ANOVA.csv")
-#+END_SRC
+#+begin_src R :tangle mst.csv :exports none
+gene_short_name,Constant_0,Constant_1,Constant_2,Constant_3,Constant_4,Constant_5,Constant_6,Constant_7,Random_0,Random_1,Random_2,Random_3,Random_4,Random_5,Random_6,Random_7,None_0,None_1,None_2,None_3,None_4,None_5,None_6,None_7
+test,7,4,6,8,6,6,2,9,5,5,3,4,4,7,2,2,2,4,7,1,2,1,5,5
+test2,7,4,6,8,6,6,2,9,5,5,3,4,4,7,2,2,2,4,7,1,2,1,100,100
+#+end_src
 
 #+begin_src R :session *R* :exports none :eval yes
 library(profvis)
 library(SeqRetriever)
+source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqDataframe.R")
 source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqANOVA.R")
-d <- SeqDataframe("/home/david/Data/RNAseq/HIO_RNAseq/HIO_Ecoli_ES/RESULTS/norm_out")
 n <- profvis({
+    d <- SeqDataframe("/home/david/Data/RNAseq/HIO_RNAseq/HIO_Ecoli_ES/RESULTS/norm_out")
     x <- SeqANOVA(d)
 })
 ## 30 ms
 #+end_src
 
 #+RESULTS:
-
-

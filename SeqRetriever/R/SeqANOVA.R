@@ -10,7 +10,8 @@
 #' results <- SeqANOVA(SeqDataframe(dir="./norm_out"))
 #' 
 SeqANOVA <- function(df = df,
-                     p.adjust.method = "bonferroni"){
+                     p.adjust.method = "bonferroni",
+                     ...){
     
     library(matrixStats)
     

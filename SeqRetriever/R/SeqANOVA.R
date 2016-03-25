@@ -22,18 +22,21 @@ SeqANOVA <- function(df = df,
         names <- unique(gsub("\\_[0-9]*$", "",colnames(df)[grep(exclude, colnames(df),invert = TRUE)]))
         return(names)
     }
+    
     ## Get the total samples, N
     get_n <- function(df){
         n <- length(unique(colnames(df)[grep(exclude, colnames(df),invert = TRUE)]))
         return(n)
     }
-    
+
+    ## make matrices for each experimental condition
     get_matrices <- function(df){
 
         get_groups <- function(df){
-            ## http://stackoverflow.com/questions/18237852/grep-in-r-using-or-and-not
             list <- lapply(group_names(df),
-                           function(x) {intersect(grep(x, colnames(df)),grep(exclude, colnames(df),invert = TRUE))})
+                           function(x) {intersect(
+                                            grep(x, colnames(df)),
+                                            grep(exclude, colnames(df),invert = TRUE))})
             list[[length(list)+1]] <- grep(exclude, colnames(df),invert = TRUE)
             return(list)
             }
@@ -42,42 +45,49 @@ SeqANOVA <- function(df = df,
         matrices <- sapply(x, function(x){df[,x]})
         return(matrices)
     }
-
+    
+    ## Exclude last matrix
     mats <- get_matrices(df)[-length(get_matrices(df))]
-    ## parallel implementation (slower)
-    ## library(parallel)
-    ## c <- makePSOCKcluster(detectCores())
-    ## sst.1 <- parLapply(cl = c,
-    ##                    mats, function(mats){rowSums((mats), na.rm = TRUE)})
-    ## stopCluster(c)
-    sst.1 <- lapply(mats,
-                    function(mats){rowSums((mats), na.rm = TRUE)})
-    sst.2 <- lapply(mats,
-                    function(mats){rowSums((mats^2), na.rm = TRUE)})
     
-    sst.1 <- data.frame(matrix(unlist(sst.1),
-                               nrow = unique(sapply(sst.1, length)),
-                               byrow = FALSE))
-    sst.2 <- data.frame(matrix(unlist(sst.2),
-                               nrow = unique(sapply(sst.2, length)),
-                               byrow = FALSE))
+    #############################################################################
+    ## parallel implementation (SLOWER)                                        ##
+    ## library(parallel)                                                       ##
+    ## c <- makePSOCKcluster(detectCores())                                    ##
+    ## sst.1 <- parLapply(cl = c,                                              ##
+    ##                    mats, function(mats){rowSums((mats), na.rm = TRUE)}) ##
+    ## stopCluster(c)                                                          ##
+    #############################################################################
     
+    ## calculate sum of squares for all matrices
+    make_sst <- function(n){        
+        x <- lapply(mats,
+                    function(mats){rowSums((mats^n), na.rm = TRUE)})
+        x <- data.frame(matrix(unlist(x),
+                               nrow = unique(sapply(x, length)),
+                               byrow = FALSE))
+        return(x)
+    }
+
+    ## calculate total sum of squares for each row
     get_sst <- function(sst.1,sst.2, df){
         sst <- rowSums(sst.2) - (rowSums(sst.1)^2)/get_n(df)
         return(sst)
     }
     
-    sst <- get_sst(sst.1,sst.2, df)
-    ssa <- rowSums((sst.1^2)/unlist(lapply(mats, function(x) length(x)))) -  (rowSums(sst.1)^2)/get_n(df)
-    
-    ssw <- sst - ssa
+    sst <- get_sst(make_sst(1),make_sst(2), df)
 
+    ## sum of squares among, by row
+    ssa <- rowSums((make_sst(1)^2)/unlist(lapply(mats, function(x) length(x)))) -  (rowSums(make_sst(1))^2)/get_n(df)
+
+    ## sum of squares within
+    ssw <- sst - ssa
+    ## calculate fstat
     fstat <- (ssa/(length(mats)-1))/(ssw/(get_n(df)-length(mats)))
     ## express f-statistic as p-value
     df$anova.p <- pf(q = fstat,
                      df1 = length(mats)-1,
                      df2 = (get_n(df)-length(mats)), lower.tail = FALSE)
-    
+    ## multiple testing corrections
     df$anova.p.adj <- p.adjust(df$anova.p,
                                method = p.adjust.method,
                                n = length(df$anova.p))

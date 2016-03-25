@@ -16,14 +16,24 @@ SeqStudents <- function(df = df,
                         p.adjust.method = "bonferroni"){
     
     ## Define the two sample groups
-    gp1 <- grep(group1,colnames(df))
-    gp2 <- grep(group2,colnames(df))
+    get_groups <- function(x){
+        o <- intersect(
+            grep(x,colnames(df)), 
+            grep(".p|Mean.|log2.", colnames(df),invert = TRUE))
+        return(o)
+    }
+
+    gp1 <- get_groups(group1)
+    gp2 <- get_groups(group2)
+    
     ## Calculate mean by sample group
     library(matrixStats)
     df[paste("Mean.",group1,sep="")] <- rowMeans(df[,gp1],na.rm=T)
     df[paste("Mean.",group2,sep="")] <- rowMeans(df[,gp2],na.rm=T)
+    
     ## Calculate log2 expression 
     df[paste("log2.",group1,".ovr.",group2,sep="")] <- log2(df[paste("Mean.",group1,sep="")]/df[paste("Mean.",group2,sep="")])
+    
     ## function to compare by row, returns t distribution
     ## The function is defined as
     row.t <- function(mat1,mat2){
@@ -40,12 +50,16 @@ SeqStudents <- function(df = df,
         tstat <- sqrt(n1*n2/n)*(m1-m2)/sqrt(vpool) 
         return(tstat)
     }
+    
     ## calculate t-distribution for group1 vs. group2
     tstat <- row.t(df[,gp1],df[,gp2])
+    
     ## calculate degrees of freedom
     degfree <- (length(gp1)+length(gp2))-2
+    
     ## express t-dist as two-sided p-value
     df[paste("ttest.",group1,".v.",group2,".p",sep="")] <- 2*pt(-abs(tstat),df=degfree)
+    
     ## calculate Bonferroni correction
     df[paste("ttest.",group1,".v.",group2,".p.adj",sep="")] <- p.adjust(2 * pt(-abs(tstat),df = degfree), method = p.adjust.method, n = dim(df)[1])
 

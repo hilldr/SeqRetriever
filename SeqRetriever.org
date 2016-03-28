@@ -246,8 +246,8 @@ str(testdf)
  $ ttest.DefEnd.v.ES.p    : num  0.0845 0.1396 0.0813 NaN 0.5087 ...
  $ ttest.DefEnd.v.ES.p.adj: num  0.21 0.294 0.204 NaN 0.779 ...
 #+end_example
-*** Add Student's t-test for Lung_A vs. Lung_F
 
+*** Add Student's t-test for Lung_A vs. Lung_F
 #+begin_src R :session *R* :exports both :results output :eval yes
 testdf <- SeqStudents(testdf,
                       group1 = "Lung_A",

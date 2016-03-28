@@ -1,3 +1,6 @@
+SeqRetriever: An R package for rapid and intuitive exploration of gene expression in large datasets
+====
+
   * [Aims](#aims)
   * [Design criteria](#design-criteria)
   * [Work flow](#work-flow)
@@ -12,6 +15,7 @@
       * [Analysis of variance (ANOVA)](#analysis-of-variance-anova)
       * [Add Student's t-test for ES vs. DefEnd](#add-students-t-test-for-es-vs-defend)
       * [Add Student's t-test for Lung~A~ vs. Lung~F~](#add-students-t-test-for-lunga-vs-lungf)
+      * [Write statistical tests to file](#write-statistical-tests-to-file)
   * [Installation](#installation)
       * [R installation instructions for Mac OSX and Windows:](#r-installation-instructions-for-mac-osx-and-windows)
   * [Please report all errors](#please-report-all-errors)
@@ -115,7 +119,7 @@ the flexibility of the standard ggplot2 format output returned by
 SeqHeatmap()
 
 ``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="both" rundoc-results="graphics" rundoc-file="./img/pheatmap.png" rundoc-eval="yes"}
-SeqpHeatmap(genes, hm.name = "pheatmap.png", w = 7, h = 3)
+SeqpHeatmap(genes, hm.name = "./img/pheatmap.png", w = 7, h = 3)
 ```
 
 ![](./img/pheatmap.png)
@@ -365,6 +369,12 @@ str(testdf)
  $ log2.Lung_A.ovr.Lung_F     : num  -2.12 -Inf NaN NaN -0.8 ...
  $ ttest.Lung_A.v.Lung_F.p    : num  0.0205 0.00395 NaN NaN 0.00913 ...
  $ ttest.Lung_A.v.Lung_F.p.adj: num  0.0406 0.0109 NaN NaN 0.0208 ...
+```
+
+### Write statistical tests to file
+
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="code" rundoc-eval="yes"}
+write.csv(testdf, file = "testdf_stats.csv")
 ```
 
 Installation

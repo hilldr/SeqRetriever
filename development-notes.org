@@ -42,11 +42,41 @@ remove.packages("SeqRetriever")
 #+RESULTS:
 
 ** Convert Org-mode to github markdown
-#+begin_src sh
-pandoc --from=org --to=markdown --toc -o README.md SeqRetriever.org 
+#+begin_example
+SeqRetriever: An R package for rapid and intuitive exploration of gene expression in large datasets
+====
+#+end_example
+
+#+begin_src sh :export both :results output
+pandoc --from=org --to=markdown -o README.md SeqRetriever.org 
 #+end_src
 
 #+RESULTS:
+#+begin_src sh :export both :results output
+cat README.md | ~/development/gh-md-toc -
+#+end_src
+
+#+RESULTS:
+#+begin_example
+  * [Aims](#aims)
+  * [Design criteria](#design-criteria)
+  * [Work flow](#work-flow)
+  * [Examples](#examples)
+    * [Setup database](#setup-database)
+    * [Select genes](#select-genes)
+    * [Print Heatmap](#print-heatmap)
+      * [Print pHeatmap](#print-pheatmap)
+    * [Print boxplot showing only genes that differ significantly between "HLO" and "Lung~A~"](#print-boxplot-showing-only-genes-that-differ-significantly-between-hlo-and-lunga)
+    * [Using <a href="https://github.com/smbache/magrittr">magrittr</a> syntax](#using-magrittr-syntax)
+    * [Statistical tests](#statistical-tests)
+      * [Analysis of variance (ANOVA)](#analysis-of-variance-anova)
+      * [Add Student's t-test for ES vs. DefEnd](#add-students-t-test-for-es-vs-defend)
+      * [Add Student's t-test for Lung~A~ vs. Lung~F~](#add-students-t-test-for-lunga-vs-lungf)
+      * [Write statistical tests to file](#write-statistical-tests-to-file)
+  * [Installation](#installation)
+      * [R installation instructions for Mac OSX and Windows:](#r-installation-instructions-for-mac-osx-and-windows)
+  * [Please report all errors](#please-report-all-errors)
+#+end_example
 
 #+begin_src ditaa :file ./img/workflow.png :cmdline -E
 +-------------+   +------------------+   +---------------------------+

@@ -72,7 +72,7 @@ print(plot2)
 #+RESULTS:
 [[file:./img/sig-boxplots.png]]
 
-** Using [[https://github.com/smbache/magrittr][magrittr]] syntax
+** Using [[https://github.com/smbache/magrittr][magrittr]]
 SeqRetriever is designed with [[https://github.com/smbache/magrittr][magrittr]] syntax in mind. You may find that this improves the readability of your work in SeqRetriever. For example:
 #+begin_src R :session *R* :exports both :results graphics :file ./img/magrittr-boxplots.png :width 800 :height 400 :eval yes
 library(magrittr)

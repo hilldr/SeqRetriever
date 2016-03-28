@@ -1,16 +1,18 @@
 SeqRetriever: An R package for rapid and intuitive exploration of gene expression in large datasets
 ====
-
   * [Aims](#aims)
   * [Design criteria](#design-criteria)
   * [Work flow](#work-flow)
   * [Examples](#examples)
     * [Setup database](#setup-database)
+      * [Working with Cuffnorm output directory](#working-with-cuffnorm-output-directory)
+      * [Working with formatted CSV file](#working-with-formatted-csv-file)
+        * [Format guidelines for CSV file import](#format-guidelines-for-csv-file-import)
     * [Select genes](#select-genes)
     * [Print Heatmap](#print-heatmap)
       * [Print pHeatmap](#print-pheatmap)
     * [Print boxplot showing only genes that differ significantly between "HLO" and "Lung~A~"](#print-boxplot-showing-only-genes-that-differ-significantly-between-hlo-and-lunga)
-    * [Using <a href="https://github.com/smbache/magrittr">magrittr</a> syntax](#using-magrittr-syntax)
+    * [Using magrittr ](#using-magrittr)
     * [Statistical tests](#statistical-tests)
       * [Analysis of variance (ANOVA)](#analysis-of-variance-anova)
       * [Add Student's t-test for ES vs. DefEnd](#add-students-t-test-for-es-vs-defend)
@@ -19,6 +21,7 @@ SeqRetriever: An R package for rapid and intuitive exploration of gene expressio
   * [Installation](#installation)
       * [R installation instructions for Mac OSX and Windows:](#r-installation-instructions-for-mac-osx-and-windows)
   * [Please report all errors](#please-report-all-errors)
+
 
 Aims
 ====
@@ -82,11 +85,30 @@ Examples
 Setup database
 --------------
 
+### Working with Cuffnorm output directory
+
 ``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="code" rundoc-eval="yes"}
 library(SeqRetriever)
 getSRexample() # Downloads and unpacks example dataset in working directory
 testdf <- SeqDataframe(dir = "./norm_out") # format dataframe
 ```
+
+### Working with formatted CSV file
+
+``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="code" rundoc-eval="yes"}
+testdf <- ImportDataframe(file = "testdf.csv")
+```
+
+#### Format guidelines for CSV file import
+
+Must contain the following headings:
+-   "gene~shortname~" containing the names of the genes with associated
+    data;
+-   Unique sample/group names, e.g. "Treated~0~, Treated~1~, Treated~2~,
+    Control~0~, Control~1~, Control~2~". Note that replicate samples
+    MUST end in "~N~" where N is a number identifying a unique sample.
+
+Example: [testdf.csv](testdf.csv)
 
 Select genes
 ------------
@@ -135,8 +157,8 @@ print(plot2)
 
 ![](./img/sig-boxplots.png)
 
-Using [magrittr](https://github.com/smbache/magrittr) syntax
-------------------------------------------------------------
+Using [magrittr](https://github.com/smbache/magrittr)
+-----------------------------------------------------
 
 SeqRetriever is designed with
 [magrittr](https://github.com/smbache/magrittr) syntax in mind. You may
@@ -374,7 +396,8 @@ str(testdf)
 ### Write statistical tests to file
 
 ``` {.r .rundoc-block rundoc-language="R" rundoc-session="*R*" rundoc-exports="code" rundoc-eval="yes"}
-write.csv(testdf, file = "testdf_stats.csv")
+write.csv(testdf, file = "testdf_stats.csv", row.names = FALSE) 
+## remove row names for ImportDataframe() compatibility
 ```
 
 Installation

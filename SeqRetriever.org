@@ -25,11 +25,26 @@ All functions in the SeqRetriever package are designed with the following criter
 * Examples
 
 ** Setup database
+
+*** Working with Cuffnorm output directory
 #+begin_src R :session *R* :exports code :eval yes
 library(SeqRetriever)
 getSRexample() # Downloads and unpacks example dataset in working directory
 testdf <- SeqDataframe(dir = "./norm_out") # format dataframe
 #+end_src
+
+*** Working with formatted CSV file
+#+begin_src R :session *R* :exports code :eval yes
+testdf <- ImportDataframe(file = "testdf.csv")
+#+end_src
+
+**** Format guidelines for CSV file import
+Must contain the following headings: 
+ - "gene_short_name" containing the names of the genes with associated data; 
+ - Unique sample/group names, e.g. "Treated_0, Treated_1, Treated_2, Control_0, Control_1, Control_2". Note that replicate samples MUST end in "_N" where N is a number identifying a unique sample. 
+
+Example: [[file:testdf.csv]]
+
 ** Select genes
 #+begin_src R :session *R* :exports code :eval yes
 genes <- SeqGenes(df = testdf,gene.names = c("OR4F5","SAMD11","AJAP1","SKI","ESPN", "CNKSR1"))
@@ -299,7 +314,8 @@ str(testdf)
 
 *** Write statistical tests to file
 #+begin_src R :session *R* :exports code :eval yes
-write.csv(testdf, file = "testdf_stats.csv")
+write.csv(testdf, file = "testdf_stats.csv", row.names = FALSE) 
+## remove row names for ImportDataframe() compatibility
 #+end_src
 
 #+RESULTS:

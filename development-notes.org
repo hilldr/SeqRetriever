@@ -52,6 +52,10 @@ pandoc --from=org --to=markdown -o README.md SeqRetriever.org
 #+end_src
 
 #+RESULTS:
+
+*** Automatically generate TOC
+[[https://github.com/ekalinin/github-markdown-toc]] 
+#+RESULTS:
 #+begin_src sh :export both :results output
 cat README.md | ~/development/gh-md-toc -
 #+end_src
@@ -63,11 +67,14 @@ cat README.md | ~/development/gh-md-toc -
   * [Work flow](#work-flow)
   * [Examples](#examples)
     * [Setup database](#setup-database)
+      * [Working with Cuffnorm output directory](#working-with-cuffnorm-output-directory)
+      * [Working with formatted CSV file](#working-with-formatted-csv-file)
+        * [Format guidelines for CSV file import](#format-guidelines-for-csv-file-import)
     * [Select genes](#select-genes)
     * [Print Heatmap](#print-heatmap)
       * [Print pHeatmap](#print-pheatmap)
     * [Print boxplot showing only genes that differ significantly between "HLO" and "Lung~A~"](#print-boxplot-showing-only-genes-that-differ-significantly-between-hlo-and-lunga)
-    * [Using <a href="https://github.com/smbache/magrittr">magrittr</a> syntax](#using-magrittr-syntax)
+    * [Using magrittr ](#using-magrittr)
     * [Statistical tests](#statistical-tests)
       * [Analysis of variance (ANOVA)](#analysis-of-variance-anova)
       * [Add Student's t-test for ES vs. DefEnd](#add-students-t-test-for-es-vs-defend)

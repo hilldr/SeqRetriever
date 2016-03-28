@@ -10,26 +10,29 @@
 #' SeqDataframe(dir="./norm_out")
 
 SeqDataframe <- function(dir = "./"){
-  ######################################
-  ## IMPORT DATA FROM CUFFNORM OUTPUT ##
-  ######################################
-    # dir.count is a string for the count table location
+
+    ## dir.count is a string for the count table location
     dir.count <- paste(dir, "/genes.count_table", sep="")
-    # read in the count table from dir.count
+
+    ## read in the count table from dir.count
     library(readr)
     counts <- read_delim(dir.count, delim = "\t")
     counts$tracking_id <- NULL
-    # Read in data attributes from genes.attr_table file
+
+    ## Read in data attributes from genes.attr_table file
     dir.attr <- paste(dir,"/genes.attr_table", sep="")
     cn.attr <- read_delim(dir.attr, delim = "\t")
-    # Bind the gene_short_name from the attr.table to data1,
+
+    ## Bind the gene_short_name from the attr.table to data1,
     gene_short_name <- cn.attr[,"gene_short_name"]
     data1 <- cbind(gene_short_name, counts)
     data1$gene_short_name <- as.character(data1$gene_short_name)
-    # load library plyr
+
+    ## load libraries 
     library(dplyr)
+    library(magrittr)
     
-    # Sum counts for gene isoforms
+    ## Sum counts for gene isoforms
     data1 <- data1 %>%
         group_by(gene_short_name) %>%
         summarise_each(funs(sum)) %>%

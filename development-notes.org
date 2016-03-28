@@ -16,7 +16,7 @@ if (wd != "/home/david/development/SeqRetriever/SeqRetriever"){
 } else {
   print("Already in the SeqRetriever working directory")
 }
-#file.remove("NAMESPACE")
+file.remove("NAMESPACE")
 library(roxygen2)
 library(devtools)
 document()

@@ -6,7 +6,7 @@
 #' @examples
 #' #' getSRexample() # Downloads and unpacks example dataset in working directory
 #' test <- SeqDataframe(dir="./norm_out")
-#' write.csv(test, file = "test.csv")
+#' write.csv(test, file = "test.csv", row.names = FALSE)
 #' example <- ImportDataframe(file = "text.csv")
 
 ImportDataframe <- function(file = "*.csv"){

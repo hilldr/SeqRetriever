@@ -1,3 +1,21 @@
+  * [Aims](#aims)
+  * [Design criteria](#design-criteria)
+  * [Work flow](#work-flow)
+  * [Examples](#examples)
+    * [Setup database](#setup-database)
+    * [Select genes](#select-genes)
+    * [Print Heatmap](#print-heatmap)
+      * [Print pHeatmap](#print-pheatmap)
+    * [Print boxplot showing only genes that differ significantly between "HLO" and "Lung~A~"](#print-boxplot-showing-only-genes-that-differ-significantly-between-hlo-and-lunga)
+    * [Using <a href="https://github.com/smbache/magrittr">magrittr</a> syntax](#using-magrittr-syntax)
+    * [Statistical tests](#statistical-tests)
+      * [Analysis of variance (ANOVA)](#analysis-of-variance-anova)
+      * [Add Student's t-test for ES vs. DefEnd](#add-students-t-test-for-es-vs-defend)
+      * [Add Student's t-test for Lung~A~ vs. Lung~F~](#add-students-t-test-for-lunga-vs-lungf)
+  * [Installation](#installation)
+      * [R installation instructions for Mac OSX and Windows:](#r-installation-instructions-for-mac-osx-and-windows)
+  * [Please report all errors](#please-report-all-errors)
+
 Aims
 ====
 

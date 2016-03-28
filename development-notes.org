@@ -43,7 +43,7 @@ remove.packages("SeqRetriever")
 
 ** Convert Org-mode to github markdown
 #+begin_src sh
-pandoc --from=org --to=markdown -o README.md SeqRetriever.org 
+pandoc --from=org --to=markdown --toc -o README.md SeqRetriever.org 
 #+end_src
 
 #+RESULTS:

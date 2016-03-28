@@ -55,7 +55,7 @@ SeqHeatmap(genes)
 *** Print pHeatmap
 This is an alternate implementation of the heatmap output using the library "pheatmap". This method will return high quality plots but lacks the flexibility of the standard ggplot2 format output returned by SeqHeatmap()
 #+begin_src R :session *R* :exports both :results graphics :file ./img/pheatmap.png :eval yes
-SeqpHeatmap(genes, hm.name = "pheatmap.png", w = 7, h = 3)
+SeqpHeatmap(genes, hm.name = "./img/pheatmap.png", w = 7, h = 3)
 #+end_src
 
 #+RESULTS:
@@ -296,6 +296,13 @@ str(testdf)
  $ ttest.Lung_A.v.Lung_F.p    : num  0.0205 0.00395 NaN NaN 0.00913 ...
  $ ttest.Lung_A.v.Lung_F.p.adj: num  0.0406 0.0109 NaN NaN 0.0208 ...
 #+end_example
+
+*** Write statistical tests to file
+#+begin_src R :session *R* :exports code :eval yes
+write.csv(testdf, file = "testdf_stats.csv")
+#+end_src
+
+#+RESULTS:
 
 * Installation
 If you have not installed the development tools package you will first need to install "devtools" in R to access the SeqRetriever repository on GitHub

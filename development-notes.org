@@ -148,9 +148,13 @@ source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqStatSubset.R")
 source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqStudents.R")
 source("/home/david/development/SeqRetriever/SeqRetriever/R/SeqHeatmap.R")
 
-plot <- SeqBoxplot(SeqStatSubset(SeqGenes(gene.names = c("DUOX1","DUOX2","DUOXA2","REG3G","SAA1","NOS2","IL22","CCL20","CXCL1"),
-                                          df = SeqDataframe(dir = "/home/david/Data/RNAseq/HIO_RNAseq/HIO_Ecoli_ES/RESULTS/HIO_norm_out")),
-                                 group1 = "Ctl", group2 = "Ecoli"))
+
+genes <- SeqGenes(gene.names = c("DUOX1","DUOX2","DUOXA2","REG3G","SAA1","NOS2","IL22","CCL20","CXCL1"),
+                  df = SeqDataframe(dir = "/home/david/Data/RNAseq/HIO_RNAseq/HIO_Ecoli_ES/RESULTS/HIO_norm_out"))
+genes.stats <- SeqStudents(df = genes, group1 = "Ctl", group2 = "Ecoli")
+
+plot <- SeqBoxplot(genes.stats)
+
 print(plot)
 #+end_src
 

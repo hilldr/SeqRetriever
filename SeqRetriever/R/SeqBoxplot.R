@@ -20,30 +20,32 @@ SeqBoxplot <- function(df,
                        size = 5)
 {
 
-###############
-## BOX PLOTS ##
-###############
-# reformat data.sub.sum for easy boxplot in ggplot2
-library(reshape)
-melt.data <- melt(df, id = "gene_short_name")
-# trim # from sample ID to create group label
-melt.data$variable <- gsub('.{2}$', '', melt.data$variable)
-# Add column names to the melted table
-colnames(melt.data) <- c("gene", "group", "fpkm")
-#melt.data <- melt.data[order(melt.data$gene),]
-# Change plot order to facet wrap
-#melt.data$gene <- factor(melt.data$gene, levels = unique(df$gene_short_name))    
-# Make box plots and export as .png file
-library(ggplot2)
+    ## reformat for easy boxplot in ggplot2
 
- 
+    ## Strip out all summary test columns and statistical tests
+    strip_stats <- function(x){
+        o <- x[,grep(".p|Mean.|log2.", colnames(df),invert = TRUE)]
+        return(o)
+    }
+    
+    library(reshape)
+    melt.data <- melt(strip_stats(df), id = "gene_short_name")
+    ## trim # from sample ID to create group label
+    melt.data$variable <- gsub("\\_[0-9]*$", "", melt.data$variable)
+    ## Add column names to the melted table
+    colnames(melt.data) <- c("gene", "group", "fpkm")
+
+    ## plotting
+    library(ggplot2)
+    ## update the user about what's going on
     print(paste("Generating boxplot(s) as ggplot2"))
+    ## setup plot
     plot <- ggplot(melt.data,aes(x = group, y = fpkm, fill = factor(group)))+
-            geom_boxplot(color = "black") +
-            geom_point(aes(x = group, y = fpkm, fill = factor(group)),
-                       color = "black", shape = 21, size = size) +
-            facet_wrap(~ gene, scales = scales, nrow = nrow) +
-            xlab("") +
-            ylab("Normalized FPKM")
+        geom_boxplot(color = "black") +
+        geom_point(aes(x = group, y = fpkm, fill = factor(group)),
+                   color = "black", shape = 21, size = size) +
+        facet_wrap(~ gene, scales = scales, nrow = nrow) +
+        xlab("") +
+        ylab("Normalized FPKM")
     return(plot)
 }

@@ -21,15 +21,22 @@ SeqpHeatmap <- function(df,
                        cellheight = 15)
 
 {
+    ## Strip out all summary test columns and statistical tests
+    strip_stats <- function(x){
+        o <- x[,grep(".p|Mean.|log2.", colnames(df),invert = TRUE)]
+        return(o)
+    }
+    df <- strip_stats(df)
+    
     ## Need matrix. Remove non-numeric
-    # Test is numeric
+    ## Test is numeric
     num <- sapply(df, is.numeric)
-    # Subset to TRUE columns
+    ## Subset to TRUE columns
     data.sub.sum.num <- df[,num]
-      # Subset to rows where SD != 0, ingnoring NA values
+    ## Subset to rows where SD != 0, ingnoring NA values
     hm.df <- data.sub.sum.num[apply(data.sub.sum.num, 1, sd, na.rm = TRUE) != 0,]
-      ## Begin heatmap plotting
-      # Open PNG device
+    ## Begin heatmap plotting
+    ## Open PNG device
     png(file = hm.name, width=w, height=h, units="in", res=144)
     library(pheatmap)
     library(RColorBrewer)

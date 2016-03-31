@@ -26,23 +26,34 @@ SeqHeatmap <- function(df,
                        dist.method = "euclidean",
                        hclust.method = "ward.D")
 {
-    df <- df[apply(df, 1, sd, na.rm = TRUE) != 0,] # remove genes when Std. Dev. = 0
+    ## Strip out all summary test columns and statistical tests
+    strip_stats <- function(x){
+        o <- x[,grep(".p|Mean.|log2.", colnames(df),invert = TRUE)]
+        return(o)
+    }
+    df <- strip_stats(df)
+    
+    ## remove genes when Std. Dev. = 0
+    df <- df[apply(df, 1, sd, na.rm = TRUE) != 0,] 
     rownames(df) <- df$gene_short_name
     df$gene_short_name <- NULL
-                                        # scale gene expression by gene (Z-score)
+    
+    ## scale gene expression by gene (Z-score)
     df <- as.data.frame(t(scale(t(df))))     
-                                        # determine order for axis clustering
+    ## determine order for axis clustering
     ord <- hclust(dist(df, method = dist.method), method = hclust.method)$order
     ord2 <- hclust(dist(t(df), method = dist.method), method = hclust.method)$order
-                                        # reformat dataframe for ggplot2
+
+    ## reformat dataframe for ggplot2
     df.plot <- data.frame(sample = rep(colnames(df),
                                        each = nrow(df)),
                           gene = rownames(df),
                           expression = unlist(df))
-                                        # fix order of genes and samples according to clustering
+    ## fix order of genes and samples according to clustering
     df.plot$gene <- factor(df.plot$gene, levels = df.plot$gene[ord])
     df.plot$sample <- factor(df.plot$sample, levels = unique(df.plot$sample)[ord2])
-                                        # default plot parameters
+
+    ## default plot parameters
     library(ggplot2)
     library(scales) # needed for "muted" colors
     plot <- ggplot(df.plot, aes(x = sample, y = gene, fill = expression)) +

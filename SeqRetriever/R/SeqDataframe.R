@@ -8,6 +8,7 @@
 #' @examples
 #' getSRexample() # Downloads and unpacks example dataset in working directory
 #' SeqDataframe(dir="./norm_out")
+#' @importFrom magrittr "%>%"
 
 SeqDataframe <- function(dir = "./"){
 
@@ -15,22 +16,20 @@ SeqDataframe <- function(dir = "./"){
     dir.count <- paste(dir, "/genes.count_table", sep="")
 
     ## read in the count table from dir.count
-    library(readr)
-    counts <- read_delim(dir.count, delim = "\t")
+    counts <- readr::read_delim(dir.count, delim = "\t")
     counts$tracking_id <- NULL
 
     ## Read in data attributes from genes.attr_table file
     dir.attr <- paste(dir,"/genes.attr_table", sep="")
-    cn.attr <- read_delim(dir.attr, delim = "\t")
+    cn.attr <- readr::read_delim(dir.attr, delim = "\t")
 
     ## Bind the gene_short_name from the attr.table to data1,
     gene_short_name <- cn.attr[,"gene_short_name"]
     data1 <- cbind(gene_short_name, counts)
     data1$gene_short_name <- as.character(data1$gene_short_name)
 
-    ## load libraries 
+    ## load libraries
     library(dplyr)
-    library(magrittr)
     
     ## Sum counts for gene isoforms
     data1 <- data1 %>%
@@ -38,7 +37,7 @@ SeqDataframe <- function(dir = "./"){
         summarise_each(funs(sum)) %>%
         as.data.frame()
     
-    rownames(data1) <- data1$gene_short_name  
+    rownames(data1) <- data1$gene_short_name
     return(data1)
 }
 

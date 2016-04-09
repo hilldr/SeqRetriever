@@ -19,7 +19,7 @@ SeqStudents <- function(df = df,
     get_groups <- function(x){
         o <- intersect(
             grep(x,colnames(df)), 
-            grep(".p|Mean.|log2.", colnames(df),invert = TRUE))
+            grep("\\.p|Mean\\.|log2\\.", colnames(df),invert = TRUE))
         return(o)
     }
 

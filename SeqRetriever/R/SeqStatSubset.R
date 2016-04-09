@@ -24,7 +24,7 @@ SeqStatSubset <- function(df = df,
 
     ## Strip out all summary test columns and statistical tests
     strip_stats <- function(x){
-        o <- x[,grep(".p|Mean.|log2.", colnames(df),invert = TRUE)]
+        o <- x[,grep("\\.p|Mean\\.|log2\\.", colnames(df),invert = TRUE)]
         return(o)
     }
     
@@ -51,9 +51,9 @@ SeqStatSubset <- function(df = df,
     
     ## Find columns with standard and adjusted p-values
     std <- intersect(
-        grep(".p", colnames(d)),
-        grep(".adj", colnames(d),invert = TRUE))
-    adj <- grep(".adj", colnames(d))
+        grep("\\.p", colnames(d)),
+        grep("\\.adj", colnames(d),invert = TRUE))
+    adj <- grep("\\.adj", colnames(d))
     
     ## subset function based on submitted column index
     s4 <- function(x) {

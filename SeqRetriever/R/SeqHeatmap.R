@@ -28,7 +28,7 @@ SeqHeatmap <- function(df,
 {
     ## Strip out all summary test columns and statistical tests
     strip_stats <- function(x){
-        o <- x[,grep(".p|Mean.|log2.", colnames(df),invert = TRUE)]
+        o <- x[,grep("\\.p|Mean\\.|log2\\.", colnames(df),invert = TRUE)]
         return(o)
     }
     df <- strip_stats(df)

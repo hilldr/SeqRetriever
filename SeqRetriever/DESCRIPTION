@@ -19,8 +19,7 @@ Depends:
     readr,
     reshape,
     matrixStats,
-    scales,
-    magrittr
+    scales
 License: GPL (>= 2)
 URL: https://github.com/hilldr/SeqRetriever
 LazyData: true

@@ -17,7 +17,7 @@ SeqANOVA <- function(df = df,
     
     ## Get the unique group names
     ## Column names to exclude
-    exclude <- "gene|.p|Mean.|log2."
+    exclude <- "gene|\\.p|Mean\\.|log2\\."
     group_names <- function(df){
         names <- unique(gsub("\\_[0-9]*$", "",colnames(df)[grep(exclude, colnames(df),invert = TRUE)]))
         return(names)

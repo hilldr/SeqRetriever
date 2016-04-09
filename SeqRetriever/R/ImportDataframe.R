@@ -12,19 +12,17 @@
 ImportDataframe <- function(file = "*.csv"){
 
     ## Read in csv file
-    library(readr)
-    data1 <- read_csv(file = file, col_names = TRUE)
+    data1 <- readr::read_csv(file = file, col_names = TRUE)
 
-    ## load libraries 
-    library(dplyr)
+    ## load libraries
     library(magrittr)
     
     ## Sum counts for gene isoforms
     data1 <- data1 %>%
-        group_by(gene_short_name) %>%
-        summarise_each(funs(sum)) %>%
+        dplyr::group_by(gene_short_name) %>%
+        dplyr::summarise_each(funs(sum)) %>%
         as.data.frame()
     
-    rownames(data1) <- data1$gene_short_name  
+    rownames(data1) <- data1$gene_short_name
     return(data1)
 }
